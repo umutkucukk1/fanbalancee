@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fan Balans Pro - İGSAŞ Edition</title>
+<style>
+    /* Mevcut stillerini korudum, ek olarak bölüştürme tablosu için ufak bir stil ekledim */
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0d0d0d;color:#f0f0f0;font-family:Arial,sans-serif;padding:16px}
+    h1{color:#fff;font-size:24px;margin-bottom:4px}
+    h1 b{color:#ff5533}
+    .sub{color:#555;font-size:11px;margin-bottom:20px;font-family:monospace}
+    .tabs{display:flex;margin-bottom:16px;border:1px solid #2a2a2a;border-radius:8px;overflow:hidden}
+    .tb{flex:1;padding:10px 4px;font-size:11px;font-family:monospace;font-weight:700;text-transform:uppercase;background:transparent;color:#555;border:none;cursor:pointer}
+    .tb.a{background:#ff5533;color:#fff}
+    .tb.d{color:#4488ff}
+    .tadd{flex:0 0 40px;font-size:20px;color:#444;background:transparent;border:none;cursor:pointer}
+    .card{background:#141414;border:1px solid #2a2a2a;border-left:4px solid #4488ff;border-radius:4px;padding:16px;margin-bottom:14px}
+    .lbl{font-size:11px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:monospace}
+    .tit{font-size:18px;font-weight:700;color:#fff;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #2a2a2a}
+    .ig{margin-bottom:14px}
+    .ilbl{font-size:12px;font-family:monospace;text-transform:uppercase;color:#aaa;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+    .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    input[type=text], select{width:100%;height:52px;padding:0 12px;font-size:20px;font-family:monospace;color:#fff;background:#0a0a0a;border:2px solid #444;border-radius:6px;outline:none;display:block}
+    select{font-size:16px;}
+    .iunit{font-size:11px;color:#555;font-family:monospace;margin-top:3px}
+    .hint{background:#1a1500;border-left:3px solid #ffaa00;padding:10px 12px;font-size:13px;color:#aaa;line-height:1.6;margin-top:4px}
+    .rbk{background:#0d1a0d;border:1px solid #1a3a1a;border-left:4px solid #00cc66;border-radius:4px;padding:14px;margin-bottom:14px}
+    .rbkt{font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#00cc66;margin-bottom:12px}
+    .dirs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+    .dbtn{display:flex;flex-direction:column;align-items:center;padding:14px 8px;background:#111;border:2px solid #333;border-radius:8px;cursor:pointer;gap:3px;width:100%}
+    .dbtn.a{border-color:#ff5533;background:#1a0f0a}
+    .dico{font-size:24px;color:#555}
+    .dtxt{font-size:12px;font-family:monospace;font-weight:700;color:#666}
+    .cbtn{display:block;width:100%;height:60px;margin-top:14px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:18px;font-weight:800;letter-spacing:3px;text-transform:uppercase;cursor:pointer}
+    .pbtn{display:block;width:100%;height:50px;margin-top:10px;background:#1a3a1a;color:#00cc66;border:1.5px solid #00cc66;border-radius:6px;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+    #resBox{display:none;margin-top:16px}
+    .rcards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .rc{border-radius:6px;padding:14px;text-align:center}
+    .rc.bl{background:#2244aa}
+    .rc.dk{background:#1a1a1a;border:1px solid #2a2a2a}
+    .rclbl{font-size:10px;font-family:monospace;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:5px}
+    .rcv{font-size:28px;font-weight:800;color:#fff}
+    .irow{display:flex;justify-content:space-between;padding:10px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;margin-bottom:5px;font-family:monospace}
+    .irow .l{font-size:12px;color:#777}
+    .v{font-size:13px;font-weight:600;color:#eee}
+    .ban{padding:11px 13px;border-radius:4px;margin-bottom:12px;font-family:monospace;font-size:12px;line-height:1.6}
+    .ban.ok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66}
+    .ban.wa{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00}
+    .ban.ba{background:rgba(255,85,51,0.1);border:1.5px solid #ff5533;color:#ff5533}
+    .fbox{background:#0a0f1a;border-left:4px solid #4488ff;border:1px solid #1a2a4a;padding:12px;margin-bottom:14px;font-family:monospace;font-size:11px;color:#6699cc;line-height:2}
+    .btab{width:100%;border-collapse:collapse;margin-bottom:14px}
+    .btab th{background:#1a1a1a;color:#555;font-size:10px;font-family:monospace;text-transform:uppercase;padding:7px 10px;text-align:left;border:1px solid #2a2a2a}
+    .btab td{padding:9px 10px;font-size:13px;font-family:monospace;color:#bbb;border:1px solid #2a2a2a}
+    .btab tr.best td{background:#1a2a1a;color:#00cc66;font-weight:700}
+    .sok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66;padding:12px;border-radius:4px;font-size:14px;margin-bottom:14px}
+    .swa{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00;padding:12px;border-radius:4px;font-size:14px;margin-bottom:14px}
+    .guide{background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:14px;margin-bottom:14px}
+    .gtit{font-size:11px;font-family:monospace;text-transform:uppercase;color:#4488ff;margin-bottom:8px;margin-top:10px}
+    .grow{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;font-size:14px;color:#ccc;line-height:1.5}
+    .gn{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+    .gn.b{background:#4488ff}.gn.g{background:#00cc66}
+    .hb{color:#4488ff;font-weight:700}.hg{color:#00cc66;font-weight:700}
+    footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:11px;font-family:monospace;color:#333}
+</style>
+</head>
+<body>
+<div style="max-width:620px;margin:0 auto;padding:4px 0 80px">
+
+<h1>Tek Düzlem <b>Fan Balans</b></h1>
+<div class="sub">// Kocaeli İGSAŞ Fabrikası - Thearle Metodu - v3.0</div>
+
+<div class="tabs" id="tabBar"></div>
+
+<div class="card">
+  <div class="lbl">Titreşim Ölçümleri (mm/s)</div>
+  <div class="tit">Veri Girişi</div>
+  <div class="ig">
+    <div class="ilbl"><span class="dot" style="background:#888"></span>Ağırlıksız (V₀)</div>
+    <input type="text" id="v0" inputmode="decimal" placeholder="25.30">
+  </div>
+  <div class="ig">
+    <div class="ilbl"><span class="dot" style="background:#ff5533"></span>Deneme 0° (V_A)</div>
+    <input type="text" id="vA" inputmode="decimal" placeholder="14.50">
+  </div>
+  <div class="ig">
+    <div class="ilbl"><span class="dot" style="background:#ffaa00"></span>Deneme 120° (V_B)</div>
+    <input type="text" id="vB" inputmode="decimal" placeholder="8.20">
+  </div>
+  <div class="ig">
+    <div class="ilbl"><span class="dot" style="background:#4488ff"></span>Deneme 240° (V_C)</div>
+    <input type="text" id="vC" inputmode="decimal" placeholder="30.10">
+  </div>
+</div>
+
+<div class="card">
+  <div class="lbl">Ekipman Özellikleri</div>
+  <div class="tit">Fan Parametreleri</div>
+  <div class="ig">
+    <div class="ilbl">Deneme Ağırlığı (W_t) [gram]</div>
+    <input type="text" id="wt" inputmode="decimal" placeholder="105.3">
+  </div>
+  <div class="ig">
+    <div class="ilbl">Fan Kütlesi (m) [kg]</div>
+    <input type="text" id="fanM" inputmode="decimal" placeholder="450">
+  </div>
+  <div class="ig">
+    <div class="ilbl">Fan Yarıçapı (r) [mm]</div>
+    <input type="text" id="fanR" inputmode="decimal" placeholder="1120">
+  </div>
+  <div class="ig">
+    <div class="ilbl">Çalışma Devri (n) [RPM]</div>
+    <input type="text" id="rpm" inputmode="numeric" placeholder="1200">
+  </div>
+  <div class="ig">
+    <div class="ilbl">Kanat Sayısı (z)</div>
+    <input type="text" id="blades" inputmode="numeric" placeholder="12">
+  </div>
+  <div class="ig">
+    <div class="ilbl">Hedef ISO Kalite Sınıfı</div>
+    <select id="isoTarget">
+        <option value="2.5">G 2.5 (Hassas Fanlar)</option>
+        <option value="6.3" selected>G 6.3 (Standart Endüstriyel)</option>
+        <option value="16">G 16 (Kaba Dağılım)</option>
+    </select>
+  </div>
+</div>
+
+<button class="cbtn" onclick="doCalc()">⟶ HESAPLA</button>
+
+<div id="resBox">
+  <div class="card" style="border-left-color:#4488ff;margin-top:16px">
+    <div class="lbl">Hesaplanan Sonuç</div>
+    <div class="tit">Düzeltme Ağırlığı</div>
+    <div class="rcards">
+      <div class="rc bl"><div class="rclbl">Ağırlık Miktarı</div><div class="rcv" id="rW">-</div><div class="rcu">gram</div></div>
+      <div class="rc dk"><div class="rclbl">Konum (0°'den)</div><div class="rcv" id="rA">-</div><div class="rcu">derece</div></div>
+    </div>
+
+    <div id="statDiv" class="sok">Henüz hesaplanmadı</div>
+    
+    <div class="irow"><span class="l">Kalıntı Balans (U)</span><span class="v" id="rU">-</span></div>
+    <div class="irow"><span class="l">ISO Sınıfı (G)</span><span class="v" id="rG">-</span></div>
+
+    <div class="sdiv">// Kanat Dağılım Analizi</div>
+    <table class="btab"><thead><tr><th>Kanat</th><th>Konum</th><th>Fark</th><th>Durum</th></tr></thead><tbody id="bTBody"></tbody></table>
+
+    <div class="guide" id="guideBox">
+        <div id="guideDiv"></div>
+    </div>
+
+    <button class="pbtn" onclick="window.print()">&#11015; Raporu Yazdır / Kaydet</button>
+  </div>
+</div>
+
+<footer>İGSAŞ Bakım Departmanı için geliştirilmiştir</footer>
+</div>
+
+<script>
+var ROT = 'CW';
+
+function getNum(id) {
+  var el = document.getElementById(id);
+  return el ? parseFloat(el.value.replace(',','.')) : NaN;
+}
+
+function calculateWeightSplit(targetWeight, targetAngle, blades) {
+    if (!blades || blades < 2) return null;
+    let sector = 360 / blades;
+    let b1_idx = Math.floor(targetAngle / sector);
+    let b2_idx = (b1_idx + 1) % blades;
+    
+    let alpha = targetAngle - (b1_idx * sector);
+    let gamma = sector;
+    let rad = Math.PI / 180;
+    
+    let w1 = targetWeight * Math.sin((gamma - alpha) * rad) / Math.sin(gamma * rad);
+    let w2 = targetWeight * Math.sin(alpha * rad) / Math.sin(gamma * rad);
+    
+    return {
+        b1: {no: b1_idx + 1, weight: w1.toFixed(1), deg: (b1_idx * sector).toFixed(1)},
+        b2: {no: b2_idx + 1, weight: w2.toFixed(1), deg: (b2_idx * sector).toFixed(1)}
+    };
+}
+
+function doCalc() {
+  var v0=getNum('v0'), vA=getNum('vA'), vB=getNum('vB'), vC=getNum('vC');
+  var wt=getNum('wt'), fm=getNum('fanM'), fr=getNum('fanR'), rpm=getNum('rpm');
+  var z=getNum('blades'), isoTgt=getNum('isoTarget');
+
+  if (isNaN(v0) || isNaN(vA) || isNaN(wt) || isNaN(fm) || isNaN(rpm)) {
+    alert("Lütfen tüm zorunlu alanları doldurun!");
+    return;
+  }
+
+  // Güvenli Deneme Ağırlığı Kontrolü
+  let maxSafeWt = (fm * 1000) * 0.001; 
+  if (wt > maxSafeWt) alert("UYARI: Deneme ağırlığı fan kütlesine göre çok yüksek (%0.1 sınırı)!");
+
+  // Thearle Hesaplamaları
+  var dA=vA*vA-v0*v0, dB=vB*vB-v0*v0, dC=vC*vC-v0*v0;
+  var x=(2*dA-dB-dC)/3, y=(dB-dC)/Math.sqrt(3);
+  var tDeg=Math.atan2(y,x)*180/Math.PI;
+  if (tDeg<0) tDeg+=360;
+  var ang=(tDeg+180)%360;
+  var uMag=Math.sqrt(x*x+y*y);
+  var wc=(2*v0*v0*wt)/uMag;
+
+  // ISO ve Limit Kontrolleri
+  var U=wc*fr, e=U/fm;
+  var om=rpm*2*Math.PI/60, G=(e/1000)*om;
+  var uPer = (isoTgt * fm * 1000) / om;
+
+  // Sonuçları Yazdır
+  document.getElementById('rW').textContent = wc.toFixed(1);
+  document.getElementById('rA').textContent = ang.toFixed(1) + "°";
+  document.getElementById('rU').textContent = U.toFixed(0) + " g.mm";
+  document.getElementById('rG').textContent = "G " + G.toFixed(1);
+  
+  var stat = document.getElementById('statDiv');
+  if (U <= uPer) {
+    stat.className = "sok";
+    stat.innerHTML = "✓ UYGUN: Kalıntı balans limitin altında (" + uPer.toFixed(0) + " g.mm)";
+  } else {
+    stat.className = "swa";
+    stat.innerHTML = "⚠ LIMIT ASILDI: Hedeflenen G" + isoTgt + " için sınır " + uPer.toFixed(0) + " g.mm olmalı.";
+  }
+
+  // Kanat Analizi ve Bölüştürme
+  var tb = document.getElementById('bTBody');
+  tb.innerHTML = "";
+  if (z > 0) {
+    let split = calculateWeightSplit(wc, ang, z);
+    let sector = 360/z;
+    for (let i=0; i<3; i++) { // En yakın 3 kanadı göster
+        let b_deg = ((Math.round(ang/sector) + i - 1 + z) % z) * sector;
+        let diff = Math.abs(ang - b_deg);
+        tb.innerHTML += `<tr><td>Kanat ${Math.round(b_deg/sector)+1}</td><td>${b_deg.toFixed(1)}°</td><td>${diff.toFixed(1)}°</td><td>-</td></tr>`;
+    }
+
+    // Rehber Kısmı
+    let gd = document.getElementById('guideDiv');
+    gd.innerHTML = `<div class="gtit">Montaj Talimatı</div>
+        <div class="grow"><div class="gn b">1</div><div>0° referansından <b>${ang.toFixed(1)}°</b> saat yönünde işaretle.</div></div>
+        <div class="grow"><div class="gn b">2</div><div><b>${wc.toFixed(1)} gram</b> ağırlığı r=${fr}mm mesafeye sabitle.</div></div>`;
+    
+    if (split) {
+        gd.innerHTML += `<div class="gtit" style="color:#ffaa00">Kanatlara Bölüştürme</div>
+            <div class="grow"><div class="gn" style="background:#ffaa00">!</div>
+            <div>Açıyı tutturamazsanız: <b>Kanat ${split.b1.no}</b>'e ${split.b1.weight}g ve <b>Kanat ${split.b2.no}</b>'ye ${split.b2.weight}g takın.</div></div>`;
+    }
+  }
+
+  document.getElementById('resBox').style.display = 'block';
+}
+</script>
+</body>
+</html>
