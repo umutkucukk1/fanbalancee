@@ -3,257 +3,706 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fan Balans Pro - İGSAŞ Edition</title>
+<title>Fan Balans v3.0</title>
 <style>
-    /* Mevcut stillerini korudum, ek olarak bölüştürme tablosu için ufak bir stil ekledim */
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{background:#0d0d0d;color:#f0f0f0;font-family:Arial,sans-serif;padding:16px}
-    h1{color:#fff;font-size:24px;margin-bottom:4px}
-    h1 b{color:#ff5533}
-    .sub{color:#555;font-size:11px;margin-bottom:20px;font-family:monospace}
-    .tabs{display:flex;margin-bottom:16px;border:1px solid #2a2a2a;border-radius:8px;overflow:hidden}
-    .tb{flex:1;padding:10px 4px;font-size:11px;font-family:monospace;font-weight:700;text-transform:uppercase;background:transparent;color:#555;border:none;cursor:pointer}
-    .tb.a{background:#ff5533;color:#fff}
-    .tb.d{color:#4488ff}
-    .tadd{flex:0 0 40px;font-size:20px;color:#444;background:transparent;border:none;cursor:pointer}
-    .card{background:#141414;border:1px solid #2a2a2a;border-left:4px solid #4488ff;border-radius:4px;padding:16px;margin-bottom:14px}
-    .lbl{font-size:11px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:monospace}
-    .tit{font-size:18px;font-weight:700;color:#fff;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #2a2a2a}
-    .ig{margin-bottom:14px}
-    .ilbl{font-size:12px;font-family:monospace;text-transform:uppercase;color:#aaa;margin-bottom:6px;display:flex;align-items:center;gap:8px}
-    .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-    input[type=text], select{width:100%;height:52px;padding:0 12px;font-size:20px;font-family:monospace;color:#fff;background:#0a0a0a;border:2px solid #444;border-radius:6px;outline:none;display:block}
-    select{font-size:16px;}
-    .iunit{font-size:11px;color:#555;font-family:monospace;margin-top:3px}
-    .hint{background:#1a1500;border-left:3px solid #ffaa00;padding:10px 12px;font-size:13px;color:#aaa;line-height:1.6;margin-top:4px}
-    .rbk{background:#0d1a0d;border:1px solid #1a3a1a;border-left:4px solid #00cc66;border-radius:4px;padding:14px;margin-bottom:14px}
-    .rbkt{font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#00cc66;margin-bottom:12px}
-    .dirs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
-    .dbtn{display:flex;flex-direction:column;align-items:center;padding:14px 8px;background:#111;border:2px solid #333;border-radius:8px;cursor:pointer;gap:3px;width:100%}
-    .dbtn.a{border-color:#ff5533;background:#1a0f0a}
-    .dico{font-size:24px;color:#555}
-    .dtxt{font-size:12px;font-family:monospace;font-weight:700;color:#666}
-    .cbtn{display:block;width:100%;height:60px;margin-top:14px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:18px;font-weight:800;letter-spacing:3px;text-transform:uppercase;cursor:pointer}
-    .pbtn{display:block;width:100%;height:50px;margin-top:10px;background:#1a3a1a;color:#00cc66;border:1.5px solid #00cc66;border-radius:6px;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
-    #resBox{display:none;margin-top:16px}
-    .rcards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-    .rc{border-radius:6px;padding:14px;text-align:center}
-    .rc.bl{background:#2244aa}
-    .rc.dk{background:#1a1a1a;border:1px solid #2a2a2a}
-    .rclbl{font-size:10px;font-family:monospace;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:5px}
-    .rcv{font-size:28px;font-weight:800;color:#fff}
-    .irow{display:flex;justify-content:space-between;padding:10px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;margin-bottom:5px;font-family:monospace}
-    .irow .l{font-size:12px;color:#777}
-    .v{font-size:13px;font-weight:600;color:#eee}
-    .ban{padding:11px 13px;border-radius:4px;margin-bottom:12px;font-family:monospace;font-size:12px;line-height:1.6}
-    .ban.ok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66}
-    .ban.wa{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00}
-    .ban.ba{background:rgba(255,85,51,0.1);border:1.5px solid #ff5533;color:#ff5533}
-    .fbox{background:#0a0f1a;border-left:4px solid #4488ff;border:1px solid #1a2a4a;padding:12px;margin-bottom:14px;font-family:monospace;font-size:11px;color:#6699cc;line-height:2}
-    .btab{width:100%;border-collapse:collapse;margin-bottom:14px}
-    .btab th{background:#1a1a1a;color:#555;font-size:10px;font-family:monospace;text-transform:uppercase;padding:7px 10px;text-align:left;border:1px solid #2a2a2a}
-    .btab td{padding:9px 10px;font-size:13px;font-family:monospace;color:#bbb;border:1px solid #2a2a2a}
-    .btab tr.best td{background:#1a2a1a;color:#00cc66;font-weight:700}
-    .sok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66;padding:12px;border-radius:4px;font-size:14px;margin-bottom:14px}
-    .swa{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00;padding:12px;border-radius:4px;font-size:14px;margin-bottom:14px}
-    .guide{background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:14px;margin-bottom:14px}
-    .gtit{font-size:11px;font-family:monospace;text-transform:uppercase;color:#4488ff;margin-bottom:8px;margin-top:10px}
-    .grow{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;font-size:14px;color:#ccc;line-height:1.5}
-    .gn{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
-    .gn.b{background:#4488ff}.gn.g{background:#00cc66}
-    .hb{color:#4488ff;font-weight:700}.hg{color:#00cc66;font-weight:700}
-    footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:11px;font-family:monospace;color:#333}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0d0d;--bg2:#141414;--bg3:#1a1a1a;--bg4:#0a0a0a;--border:#2a2a2a;--border2:#444;--text:#f0f0f0;--text2:#aaa;--text3:#555;--text4:#777;--text5:#bbb;--card-bl:4px solid #00833e;--igsas:#00833e;--igsas-dark:#00602d;--igsas-light:#1d8649;--igsas2:#89734c}
+body.light{--bg:#ffffff;--bg2:#ffffff;--bg3:#f4f6f5;--bg4:#ffffff;--border:#dde3e0;--border2:#b8c2bd;--text:#1a1a1a;--text2:#444;--text3:#8a948f;--text4:#5a655f;--text5:#333;--card-bl:4px solid #00833e;--igsas:#00833e;--igsas-dark:#00602d;--igsas-light:#1d8649;--igsas2:#89734c}
+body{background:var(--bg);color:var(--text);font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;padding:16px;transition:background 0.25s,color 0.25s}
+h1{color:var(--text);font-size:24px;margin-bottom:4px}
+h1 b{color:var(--igsas)}
+.hrow{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.theme-btn{background:var(--bg3);border:1px solid var(--border);border-radius:50%;width:44px;height:44px;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.2s;padding:0;line-height:1}
+.theme-btn:hover{transform:scale(1.15)}
+body.light .theme-btn{background:#e8ecf0}
+.tabs{display:flex;margin-bottom:14px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.tb{flex:1;padding:10px 4px;font-size:11px;font-family:monospace;font-weight:700;text-transform:uppercase;background:transparent;color:var(--text3);border:none;cursor:pointer}
+.tb.a{background:var(--igsas);color:#fff}
+.tb.d{color:var(--igsas)}
+.tadd{flex:0 0 40px;font-size:20px;color:var(--text3);background:transparent;border:none;cursor:pointer}
+.card{background:var(--bg2);border:1px solid var(--border);border-left:var(--card-bl);border-radius:4px;padding:16px;margin-bottom:14px}
+.lbl{font-size:11px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:monospace}
+.tit{font-size:18px;font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.ig{margin-bottom:12px}
+.ilbl{font-size:12px;font-family:monospace;text-transform:uppercase;color:var(--text2);margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+input[type=text],select{width:100%;height:50px;padding:0 12px;font-size:19px;font-family:monospace;color:var(--text);background:var(--bg4);border:2px solid var(--border2);border-radius:6px;outline:none;display:block;-webkit-text-fill-color:var(--text);box-shadow:inset 0 0 0 9999px var(--bg4)}
+body.light input[type=text],body.light select{-webkit-text-fill-color:#111;box-shadow:inset 0 0 0 9999px #fff}
+input[type=text]:focus,select:focus{border-color:var(--igsas)}
+input[type=text]::placeholder{color:var(--text3);-webkit-text-fill-color:var(--text3)}
+body.light input[type=text]::placeholder{-webkit-text-fill-color:#aaa}
+select{-webkit-appearance:none;cursor:pointer;font-size:14px}
+select option{background:var(--bg4);color:var(--text)}
+.iunit{font-size:11px;color:var(--text3);font-family:monospace;margin-top:3px}
+.hint{background:var(--bg3);border-left:3px solid #ffaa00;padding:10px 12px;font-size:13px;color:var(--text2);line-height:1.6;margin-top:4px}
+.hint b{color:var(--text)}
+.rbk{background:var(--bg3);border:1px solid #1a3a1a;border-left:4px solid #00cc66;border-radius:4px;padding:12px;margin-bottom:12px}
+.rbkt{font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#00cc66;margin-bottom:10px}
+.rsep{font-size:11px;font-family:monospace;color:var(--text3);text-align:center;margin:6px 0}
+.dirs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.dbtn{display:flex;flex-direction:column;align-items:center;padding:12px 8px;background:var(--bg3);border:2px solid var(--border);border-radius:8px;cursor:pointer;gap:3px;width:100%}
+.dbtn.a{border-color:var(--igsas);background:var(--bg3)}
+body:not(.light) .dbtn.a{background:#1a0f0a}
+.dico{font-size:22px;color:var(--text3)}
+.dbtn.a .dico{color:var(--igsas)}
+.dtxt{font-size:12px;font-family:monospace;font-weight:700;color:var(--text3)}
+.dbtn.a .dtxt{color:var(--igsas)}
+.dsub{font-size:10px;font-family:monospace;color:var(--text3)}
+.dbtn.a .dsub{color:#cc4422}
+.cbtn{display:block;width:100%;height:58px;margin-top:14px;background:var(--igsas);color:#fff;border:none;border-radius:6px;font-size:18px;font-weight:800;letter-spacing:3px;text-transform:uppercase;cursor:pointer}
+.pbtn{display:block;width:100%;height:48px;margin-top:10px;background:#1a3a1a;color:#00cc66;border:1.5px solid #00cc66;border-radius:6px;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+body.light .pbtn{background:#e8f5e9}
+.rbtn{display:block;width:100%;height:46px;margin-top:10px;background:transparent;color:var(--text3);border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+#resBox{display:none;margin-top:16px}
+.rcards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.rc{border-radius:6px;padding:12px;text-align:center}
+.rc.bl{background:var(--igsas)}
+.rc.dk{background:var(--bg3);border:1px solid var(--border)}
+.rclbl{font-size:9px;font-family:monospace;text-transform:uppercase;color:rgba(128,128,128,0.8);margin-bottom:4px}
+.rc.bl .rclbl{color:rgba(255,255,255,0.55)}
+.rcv{font-size:24px;font-weight:800;color:var(--text)}
+.rc.bl .rcv{color:#fff}
+.rcu{font-size:10px;color:var(--text3);margin-top:2px}
+.rc.bl .rcu{color:rgba(255,255,255,0.45)}
+.irow{display:flex;justify-content:space-between;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;margin-bottom:5px;font-family:monospace}
+.irow .l{font-size:11px;color:var(--text4)}
+.irow .v{font-size:13px;font-weight:600;color:var(--text)}
+.v.ok{color:#00cc66}.v.wa{color:#ffaa00}.v.ba{color:#ff5533}
+.ban{padding:10px 13px;border-radius:4px;margin-bottom:12px;font-family:monospace;font-size:12px;line-height:1.6}
+.ban.ok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66}
+.ban.wa{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00}
+.ban.ba{background:rgba(255,85,51,0.1);border:1.5px solid #ff5533;color:#ff5533}
+.fbox{background:var(--bg3);border-left:4px solid var(--igsas);border:1px solid var(--border);padding:13px;margin-bottom:12px;font-family:monospace;font-size:13px;color:#6699cc;line-height:2.2}
+body.light .fbox{color:#224488}
+.fbox .ft{font-size:10px;color:#2255aa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.fbox em{color:#88bbff;font-weight:700;font-style:normal}
+body.light .fbox em{color:#1155aa}
+.btab{width:100%;border-collapse:collapse;margin-bottom:12px}
+.btab th{background:var(--bg3);color:var(--text3);font-size:10px;font-family:monospace;text-transform:uppercase;padding:6px 10px;text-align:left;border:1px solid var(--border)}
+.btab td{padding:8px 10px;font-size:13px;font-family:monospace;color:var(--text5);border:1px solid var(--border)}
+.btab tr.best td{background:#1a2a1a;color:#00cc66;font-weight:700}
+body.light .btab tr.best td{background:#e8f5e9;color:#006633}
+.guide{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:12px}
+.gtit{font-size:11px;font-family:monospace;text-transform:uppercase;color:var(--igsas);margin-bottom:7px;margin-top:9px}
+.grow{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;font-size:14px;color:var(--text2);line-height:1.5}
+.gn{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.gn.b{background:var(--igsas)}.gn.g{background:#00cc66}
+.hb{color:var(--igsas);font-weight:700}.hg{color:#00cc66;font-weight:700}
+.sok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66;padding:11px;border-radius:4px;font-size:14px;margin-bottom:12px}
+.swa{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00;padding:11px;border-radius:4px;font-size:14px;margin-bottom:12px}
+.spok{background:rgba(0,204,102,0.08);border:1.5px solid #00cc66;color:#00cc66;padding:10px;border-radius:4px;margin-bottom:10px;font-size:12px;font-family:monospace}
+.spwa{background:rgba(255,85,51,0.08);border:1.5px solid #ff5533;color:#ff5533;padding:10px;border-radius:4px;margin-bottom:10px;font-size:12px;font-family:monospace}
+.sr2{background:var(--bg3);border-left:4px solid #ffaa00;padding:11px;border-radius:0 4px 4px 0;margin-bottom:12px;font-size:13px;color:var(--text2);line-height:1.7}
+.sr2 b{color:#ffaa00}
+.sdiv{font-size:10px;font-family:monospace;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin:14px 0 5px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.dialwrap{display:flex;flex-direction:column;align-items:center;gap:7px;margin:12px 0;position:relative}
+.diallbl{font-size:11px;font-family:monospace;color:var(--igsas);letter-spacing:1px;text-transform:uppercase}
+footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;font-family:monospace;color:var(--text3)}
 </style>
+
+<script>
+function toggleResonance(){var b=document.getElementById('raccBody'),btn=document.getElementById('raccBtn');if(!b)return;if(b.style.display==='none'){b.style.display='block';btn.textContent='\u2212';}else{b.style.display='none';btn.textContent='+';}}
+function toggleTheme(){var isLight=document.body.classList.toggle('light');var btn=document.getElementById('themeBtn');btn.textContent=isLight?'😎':'🙂';var sv=document.querySelector('#dialSvg circle');if(sv)sv.setAttribute('fill',isLight?'#e8ecf0':'#111');try{localStorage.setItem('theme',isLight?'light':'dark');}catch(e){}}
+
+var ROT='CW',ACTIVE=0,SESSIONS=[makeSess(1)];
+var IDS=['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','fn','stiff','iso10816','vPost','equipName'];
+function makeSess(n){return{n:n,inp:{v0:'',vA:'',vB:'',vC:'',wt:'',fanM:'',fanR:'',rpm:'',blades:'',fn:'',stiff:'',iso10816:'3',vPost:'',equipName:'',rot:'CW'},res:null};}
+function getNum(id){var el=document.getElementById(id);if(!el)return NaN;var s=(el.tagName==='SELECT')?el.value:el.value.replace(',','.').trim();if(!s)return NaN;return parseFloat(s);}
+function isoClass(G){if(G<1)return{c:'G1',d:'Hassas - Turbin seviyesi',q:'ok'};if(G<2.5)return{c:'G2.5',d:'Iyi - Elektrik motoru',q:'ok'};if(G<6.3)return{c:'G6.3',d:'Normal - End. fan kabul',q:'ok'};if(G<16)return{c:'G16',d:'Kaba - Iyilestirme onerilir',q:'wa'};if(G<40)return{c:'G40',d:'Cok kaba - Ek balans gerekli',q:'wa'};return{c:'G40+',d:'Kritik - Acil mudahale',q:'ba'};}
+function iso10816Limits(cls){var lims={'1':[0.71,1.12,1.80],'2':[1.4,2.8,4.5],'3':[2.3,4.5,7.1],'4':[3.5,7.1,11.0]};return lims[cls]||lims['3'];}
+function iso10816Zone(v,cls){var L=iso10816Limits(cls);if(v<=L[0])return{z:'A',d:'Iyi - Yeni makine beklentisi',q:'ok'};if(v<=L[1])return{z:'B',d:'Kabul edilebilir - Surekli calisma',q:'ok'};if(v<=L[2])return{z:'C',d:'Alarm - Kisa vadeli calisma, bakim planla',q:'wa'};return{z:'D',d:'Tehlike - Hasara yol acabilir, dur!',q:'ba'};}
+function thearle(v0,vA,vB,vC,wt,fr){var dA=vA*vA-v0*v0,dB=vB*vB-v0*v0,dC=vC*vC-v0*v0;var x=(2*dA-dB-dC)/3,y=(dB-dC)/Math.sqrt(3);var tDeg=Math.atan2(y,x)*180/Math.PI;if(tDeg<0)tDeg+=360;var ang=(tDeg+180)%360;var uMag=Math.sqrt(x*x+y*y);if(uMag<0.0001)uMag=0.0001;var wc=(2*v0*v0*wt)/uMag,U=wc*fr;return{dA:dA,dB:dB,dC:dC,x:x,y:y,tDeg:tDeg,ang:ang,uMag:uMag,wc:wc,U:U};}
+function setDir(d){ROT=d;document.getElementById('dirCW').className=(d==='CW')?'dbtn a':'dbtn';document.getElementById('dirCCW').className=(d==='CCW')?'dbtn a':'dbtn';}
+function saveInputs(){var s=SESSIONS[ACTIVE];IDS.forEach(function(id){var el=document.getElementById(id);if(el)s.inp[id]=(el.tagName==='SELECT')?el.value:el.value;});s.inp.rot=ROT;}
+function loadInputs(idx){var s=SESSIONS[idx];IDS.forEach(function(id){var el=document.getElementById(id);if(!el)return;if(el.tagName==='SELECT')el.value=s.inp[id]||'3';else el.value=s.inp[id]||'';});setDir(s.inp.rot||'CW');var rb=document.getElementById('resBox');if(s.res){showResult(s.res);rb.style.display='block';updatePostResult();}else rb.style.display='none';}
+function buildTabs(){var bar=document.getElementById('tabBar');bar.innerHTML='';SESSIONS.forEach(function(s,i){var b=document.createElement('button');b.className='tb'+(s.res?' d':'')+(i===ACTIVE?' a':'');b.textContent=(i+1)+'. Calisma';(function(ii){b.onclick=function(){switchTab(ii);};})(i);bar.appendChild(b);});if(SESSIONS.length<5){var a=document.createElement('button');a.className='tadd';a.textContent='+';a.onclick=addTab;bar.appendChild(a);}}
+function switchTab(idx){saveInputs();ACTIVE=idx;buildTabs();loadInputs(idx);window.scrollTo(0,0);}
+function addTab(){if(SESSIONS.length>=5){alert('En fazla 5 calisma');return;}saveInputs();SESSIONS.push(makeSess(SESSIONS.length+1));buildTabs();switchTab(SESSIONS.length-1);}
+function drawTicks(svgId){var g=document.getElementById(svgId);if(!g)return;for(var i=0;i<36;i++){var rad=(i*10-90)*Math.PI/180,mj=(i%3===0);var ln=document.createElementNS('http://www.w3.org/2000/svg','line');ln.setAttribute('x1',100+90*Math.cos(rad));ln.setAttribute('y1',100+90*Math.sin(rad));ln.setAttribute('x2',100+(mj?80:85)*Math.cos(rad));ln.setAttribute('y2',100+(mj?80:85)*Math.sin(rad));ln.setAttribute('stroke',mj?'#444':'#222');ln.setAttribute('stroke-width',mj?'1.5':'0.8');g.appendChild(ln);}}
+
+function updateWtHint(){var fm=getNum('fanM'),fr=getNum('fanR'),rpm=getNum('rpm');var hint=document.getElementById('wtHint');if(!hint)return;if(isNaN(fm)||fm<=0||isNaN(fr)||fr<=0||isNaN(rpm)||rpm<=0){hint.textContent='';return;}var om=rpm*2*Math.PI/60;var wt_rec=(6.3*1000/om)*fm/fr;hint.textContent='(Önerilen: '+wt_rec.toFixed(1)+' gram — ISO G6.3)';}
+
+function doCalc(){
+  var v0=getNum('v0'),vA=getNum('vA'),vB=getNum('vB'),vC=getNum('vC');
+  var wt=getNum('wt'),fm=getNum('fanM'),fr=getNum('fanR'),rpm=getNum('rpm');
+  var nb=getNum('blades'),fn=getNum('fn'),k=getNum('stiff');
+  var isoSel=document.getElementById('iso10816')?document.getElementById('iso10816').value:'3';
+  var errs=[];
+  if(isNaN(v0)||v0<=0)errs.push('V0');if(isNaN(vA)||vA<=0)errs.push('VA');
+  if(isNaN(vB)||vB<=0)errs.push('VB');if(isNaN(vC)||vC<=0)errs.push('VC');
+  if(isNaN(wt)||wt<=0)errs.push('Wt');if(isNaN(fm)||fm<=0)errs.push('Fan Kutlesi');
+  if(isNaN(fr)||fr<=0)errs.push('Fan Yaricapi');if(isNaN(rpm)||rpm<=0)errs.push('RPM');
+  if(errs.length){alert('Eksik deger:\n'+errs.join('\n'));return;}
+  var z=(!isNaN(nb)&&nb>=2)?Math.round(nb):0;
+  var t=thearle(v0,vA,vB,vC,wt,fr);
+  var e=t.U/fm,tgt=v0*0.15;
+  var om=rpm*2*Math.PI/60,G=(e/1000)*om;
+  var fHz=rpm/60,iso=isoClass(G),bpf=z>0?fHz*z:0;
+  var zone10816=iso10816Zone(v0,isoSel),lims10816=iso10816Limits(isoSel);
+  var e_per=6.3*1000/om,U_per=e_per*fm,U_ratio=t.U/U_per;
+  var F_unbal=(t.wc/1000)*(fr/1000)*om*om;
+  var hasFn=(!isNaN(fn)&&fn>0),hasK=(!isNaN(k)&&k>0),hasR=hasFn||hasK;
+  var fCrit=NaN,nCrit=NaN,kCalc=NaN,rRat=NaN,rZone='',rSrc='';
+  if(hasFn){fCrit=fn;nCrit=fn*60;kCalc=fm*Math.pow(2*Math.PI*fn,2);rSrc='Darbe testi';}
+  else if(hasK){fCrit=(1/(2*Math.PI))*Math.sqrt(k/fm);nCrit=fCrit*60;kCalc=k;rSrc='Rulman katalog';}
+  if(hasR){rRat=fHz/fCrit;rZone=rRat<0.7?'ok':(rRat<1.3?'ba':'wa');}
+  var bList=[];
+  if(z>0){var bst=360/z;for(var b=0;b<z;b++){var bd=b*bst,df=Math.abs(((t.ang-bd+540)%360)-180);bList.push({n:b+1,d:bd,f:df});}bList.sort(function(a,b){return a.f-b.f;});}
+  var nLbl=bList.length>0?'Kanat '+bList[0].n+' ('+bList[0].d.toFixed(1)+')':'-';
+  var res={rot:ROT,v0:v0,vA:vA,vB:vB,vC:vC,wt:wt,fm:fm,fr:fr,rpm:rpm,z:z,dA:t.dA,dB:t.dB,dC:t.dC,x:t.x,y:t.y,tDeg:t.tDeg,ang:t.ang,uMag:t.uMag,wc:t.wc,U:t.U,e:e,tgt:tgt,G:G,fHz:fHz,om:om,bpf:bpf,iso:iso,bList:bList,nLbl:nLbl,fn:fn,k:k,hasFn:hasFn,hasK:hasK,hasR:hasR,fCrit:fCrit,nCrit:nCrit,kCalc:kCalc,rRat:rRat,rZone:rZone,rSrc:rSrc,isoSel:isoSel,zone10816:zone10816,lims10816:lims10816,e_per:e_per,U_per:U_per,U_ratio:U_ratio,F_unbal:F_unbal};
+  saveInputs();SESSIONS[ACTIVE].res=res;buildTabs();showResult(res);
+  document.getElementById('resBox').style.display='block';
+  document.getElementById('resBox').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function showResult(r){
+  document.getElementById('rW').textContent=r.wc.toFixed(1);
+  document.getElementById('rA').textContent=r.ang.toFixed(1)+'°';
+  document.getElementById('rU').textContent=r.U.toFixed(0)+' g.mm';
+  document.getElementById('rE').textContent=r.e.toFixed(1)+' μm';
+  document.getElementById('rG').textContent='G '+r.G.toFixed(1)+' mm/s  →  '+r.iso.c;
+  document.getElementById('rHz').textContent=r.fHz.toFixed(2)+' Hz  ('+r.rpm+' RPM)';
+  document.getElementById('rF').textContent=r.F_unbal.toFixed(1)+' N';
+  document.getElementById('rUper').textContent=r.U_per.toFixed(0)+' g.mm  (x'+r.U_ratio.toFixed(2)+' limit)';
+  document.getElementById('rE').className='v '+(r.e<150?'ok':r.e<400?'wa':'ba');
+  document.getElementById('rG').className='v '+(r.G<6.3?'ok':r.G<16?'wa':'ba');
+  document.getElementById('rF').className='v '+(r.F_unbal<500?'ok':r.F_unbal<2000?'wa':'ba');
+  document.getElementById('rUper').className='v '+(r.U_ratio<1?'ok':r.U_ratio<2?'wa':'ba');
+  var z10=r.zone10816;
+  var iso10El=document.getElementById('iso10816Ban');
+  iso10El.className='ban '+z10.q;
+  var cls10N={'1':'Sinif I','2':'Sinif II','3':'Sinif III (sabit zemin)','4':'Sinif IV (esnek zemin)'};
+  iso10El.textContent='ISO 10816 '+cls10N[r.isoSel]+' | V0='+r.v0.toFixed(2)+' mm/s  →  Bolge '+z10.z+' | '+z10.d;
+  var uperEl=document.getElementById('uperBan');
+  uperEl.className='ban '+(r.U_ratio<1?'ok':r.U_ratio<2?'wa':'ba');
+  uperEl.textContent='ISO 1940-1 | Kalinti dengesizlik: U='+r.U.toFixed(0)+' g.mm  |  G6.3 limiti: U_per='+r.U_per.toFixed(0)+' g.mm  |  Oran: x'+r.U_ratio.toFixed(2)+(r.U_ratio<1?' — LIMIT ICERISINDE':'  — LIMIT ASIMDA');
+  document.getElementById('f1').innerHTML='<b>dA</b>=VA\u00b2-V0\u00b2=<em>'+r.dA.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// 0\u00b0 etki farki</span>';
+  document.getElementById('f2').innerHTML='<b>dB</b>=VB\u00b2-V0\u00b2=<em>'+r.dB.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// 120\u00b0 etki farki</span>';
+  document.getElementById('f3').innerHTML='<b>dC</b>=VC\u00b2-V0\u00b2=<em>'+r.dC.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// 240\u00b0 etki farki</span>';
+  document.getElementById('f4').innerHTML='<b>x</b>=(2\u00b7dA-dB-dC)/3=<em>'+r.x.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// yatay bilesen</span>';
+  document.getElementById('f5').innerHTML='<b>y</b>=(dB-dC)/\u221a3=<em>'+r.y.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// dikey bilesen</span>';
+  document.getElementById('f6').innerHTML='<b>\u03b8</b>=atan2(y,x)=<em>'+r.tDeg.toFixed(2)+'\u00b0</em> +180\u00b0=<em>'+r.ang.toFixed(2)+'\u00b0</em> &nbsp;<span style="color:#444;font-size:10px">// duzeltme konumu</span>';
+  document.getElementById('f7').innerHTML='<b>W_duz</b>=2\u00b7V0\u00b2\u00b7Wt/\u221a(x\u00b2+y\u00b2)=<em>'+r.wc.toFixed(1)+' g</em>';
+  var ib=document.getElementById('isoBan');ib.className='ban '+r.iso.q;ib.textContent='ISO 1940-1 | G='+r.G.toFixed(1)+' mm/s  \u2192  '+r.iso.c+' | '+r.iso.d;
+  var rr=document.getElementById('rrRow'),rr2=document.getElementById('rrRow2'),rb=document.getElementById('resonBan');
+  if(r.hasR){document.getElementById('rNc').textContent=r.nCrit.toFixed(0)+' RPM ('+r.fCrit.toFixed(2)+' Hz)';document.getElementById('rRR').textContent=r.rRat.toFixed(3)+'  \u2192  '+(r.rZone==='ok'?'Guvenli':r.rZone==='ba'?'KRITIK!':'Ust kritik');document.getElementById('rRR').className='v '+r.rZone;rr.style.display=rr2.style.display=rb.style.display='';rb.className='ban '+r.rZone;var rt=r.rZone==='ok'?'Alt kritik bolge - Guvenli (Oran<0.70)':r.rZone==='ba'?'KRITIK REZONANS! (0.70-1.30)':'Ust kritik - Kritik hiz gecilmis (Oran>1.30)';rb.textContent=rt+' | Oran='+r.rRat.toFixed(3)+' ['+r.rSrc+']';}else{rr.style.display=rr2.style.display=rb.style.display='none';}
+  var sd=document.getElementById('spdDiv');
+  if(r.rpm<200||r.rpm>4000){sd.className='spwa';sd.textContent=r.rpm<200?'Devir cok dusuk':'Yuksek devir - Spektrum analizi onerilir';}
+  else{sd.className='spok';sd.textContent='Calisma frekansi: '+r.fHz.toFixed(2)+' Hz'+(r.bpf>0?'  |  BPF: '+r.bpf.toFixed(1)+' Hz':'');}
+  var sr=document.getElementById('sr2Div');
+  if(r.e>200||r.G>10)sr.innerHTML='<b>2. Tur Gerekebilir:</b> Tahmini kalan: '+(r.v0*0.20).toFixed(2)+' mm/s';
+  else sr.textContent='Dengesizlik makul - tek turda hedefe ulasma olasiligi yuksek.';
+  renderDial(r,'dTicks','dArrow','dDot','bMarkers','dialSvg','dialWrap','dFooter','angLbl');
+  var tb=document.getElementById('bTBody');tb.innerHTML='';
+  if(r.bList.length>0){
+    r.bList.slice(0,Math.min(3,r.bList.length)).forEach(function(bl,t2){
+      // Fark: duzeltme acisinin kanatin saginda mi solunda mi oldugunu bul
+      // Pozitif = duzeltme kanadin saat yonunde ilesinde
+      // signed diff: ang - kanat konumu, -180 ile +180 arasina normalize et
+      var signedDiff = ((r.ang - bl.d + 540) % 360) - 180;
+      var farkStr = (signedDiff >= 0 ? '+' : '') + signedDiff.toFixed(1) + '°';
+      var tr2=document.createElement('tr');if(t2===0)tr2.className='best';
+      tr2.innerHTML='<td>Kanat '+bl.n+'</td><td>'+bl.d.toFixed(1)+'°</td><td>'+farkStr+'</td><td>'+(t2===0?'En yakin':t2===1?'2. yakin':'3. yakin')+'</td>';
+      tb.appendChild(tr2);
+    });
+  } else tb.innerHTML='<tr><td colspan="4" style="color:#444;text-align:center">Girilmedi</td></tr>';
+  var st=document.getElementById('statDiv');st.className=r.e<400?'sok':'swa';st.textContent=r.e<400?'Hesaplama tamamlandi':'Yuksek dengesizlik - dogrulama kritik';
+  document.getElementById('guideDiv').innerHTML='<div class="gtit">Fan Tarafi (F2)</div><div class="grow"><div class="gn b">1</div><div>Ekipman durdurun - LOTO uygula</div></div><div class="grow"><div class="gn b">2</div><div>0\u00b0den <span class="hb">'+r.ang.toFixed(1)+'\u00b0</span> konumunu isaretleyin</div></div><div class="grow"><div class="gn b">3</div><div>En yakin kanat: <span class="hb">'+r.nLbl+'</span></div></div><div class="grow"><div class="gn b">4</div><div><span class="hb">'+r.wc.toFixed(1)+' gram</span> agirlik takin (r='+r.fr+' mm)</div></div><div class="gtit" style="color:#00cc66">Dogrulama</div><div class="grow"><div class="gn g">5</div><div>Calistir, olcum al</div></div><div class="grow"><div class="gn g">6</div><div>Do&#287;rulama &#246;l&#231;&#252;m&#252; ISO '+r.iso.c+' s&#305;n&#305;f&#305;na uygun olmal&#305;</div></div><div class="grow"><div class="gn g">7</div><div>Tutmazsa yeni sekme ile 2. tur</div></div>';
+}
+
+function renderDial(r,ticksId,arrowId,dotId,markersId,svgId,wrapId,footerId,lblId){
+  var svgDeg=r.rot==='CW'?(-r.ang-90):(r.ang-90);var rad=svgDeg*Math.PI/180;
+  var ax=100+78*Math.cos(rad),ay=100+78*Math.sin(rad);
+  var da=document.getElementById(arrowId),dd=document.getElementById(dotId);
+  if(!da)return;da.setAttribute('x2',ax);da.setAttribute('y2',ay);da.style.display='';
+  dd.setAttribute('cx',100+82*Math.cos(rad));dd.setAttribute('cy',100+82*Math.sin(rad));dd.style.display='';
+  var old=document.getElementById(lblId);if(old)old.parentNode.removeChild(old);
+  var dw=document.getElementById(wrapId);var se=document.getElementById(svgId);
+  var sw=se?se.getBoundingClientRect().width:220,sh=se?se.getBoundingClientRect().height:236;
+  if(sw<10){sw=220;sh=236;}
+  var px=(100+88*Math.cos(rad)+10)*(sw/220),py=(100+88*Math.sin(rad)+20)*(sh/236);
+  var al=document.createElement('div');al.id=lblId;al.textContent=r.ang.toFixed(1)+'\u00b0';
+  al.style.cssText='position:absolute;left:'+px.toFixed(0)+'px;top:'+py.toFixed(0)+'px;transform:translate(-50%,-50%);background:#050d1a;border:1.5px solid #3377cc;border-radius:5px;padding:3px 8px;font-size:13px;font-weight:bold;font-family:monospace;color:#66aaff;pointer-events:none;z-index:10;';
+  dw.appendChild(al);
+  var bm=document.getElementById(markersId);bm.innerHTML='';
+  if(r.z>0){var bst=360/r.z;var nearestN=r.bList.length>0?r.bList[0].n:-1;for(var b=0;b<r.z;b++){var deg=b*bst;var kn=b+1;var vstd=(r.rot==='CW')?(-deg-90):(deg-90);var brd=vstd*Math.PI/180;var best=(kn===nearestN);var cx=(100+72*Math.cos(brd)),cy=(100+72*Math.sin(brd));var ci=document.createElementNS('http://www.w3.org/2000/svg','circle');ci.setAttribute('cx',cx.toFixed(1));ci.setAttribute('cy',cy.toFixed(1));ci.setAttribute('r','9');ci.setAttribute('fill',best?'#00833e':'#222');ci.setAttribute('stroke',best?'#004d20':'#555');ci.setAttribute('stroke-width','1.5');bm.appendChild(ci);var bt=document.createElementNS('http://www.w3.org/2000/svg','text');bt.setAttribute('x',cx.toFixed(1));bt.setAttribute('y',(cy+3).toFixed(1));bt.setAttribute('text-anchor','middle');bt.setAttribute('fill','#fff');bt.setAttribute('font-size','9');bt.setAttribute('font-family','Arial');bt.setAttribute('font-weight','bold');bt.textContent=kn;bm.appendChild(bt);}}
+  var ea=document.getElementById('rotArrow'+svgId);if(ea)ea.parentNode.removeChild(ea);
+  var svEl=document.getElementById(svgId);
+  if(svEl){var rg=document.createElementNS('http://www.w3.org/2000/svg','g');rg.setAttribute('id','rotArrow'+svgId);var rr3=98,col=r.rot==='CW'?'#ff5533':'#4488ff',lbl2=r.rot==='CW'?'CCW':'CW',lbx=r.rot==='CW'?170:30;var as3=r.rot==='CW'?(-50-90)*Math.PI/180:(50-90)*Math.PI/180;var ae3=r.rot==='CW'?(50-90)*Math.PI/180:(-50-90)*Math.PI/180,sw3=r.rot==='CW'?1:0;var p3=document.createElementNS('http://www.w3.org/2000/svg','path');p3.setAttribute('d','M '+(100+rr3*Math.cos(as3))+' '+(100+rr3*Math.sin(as3))+' A '+rr3+' '+rr3+' 0 0 '+sw3+' '+(100+rr3*Math.cos(ae3))+' '+(100+rr3*Math.sin(ae3)));p3.setAttribute('fill','none');p3.setAttribute('stroke',col);p3.setAttribute('stroke-width','2.5');p3.setAttribute('stroke-linecap','round');var ha3=r.rot==='CW'?ae3+0.35:ae3-0.35,hx3=100+rr3*Math.cos(ae3),hy3=100+rr3*Math.sin(ae3);var ah3=document.createElementNS('http://www.w3.org/2000/svg','polyline');ah3.setAttribute('points',(hx3-7*Math.cos(ha3-0.4))+','+(hy3-7*Math.sin(ha3-0.4))+' '+hx3+','+hy3+' '+(hx3-7*Math.cos(ha3+0.4))+','+(hy3-7*Math.sin(ha3+0.4)));ah3.setAttribute('fill','none');ah3.setAttribute('stroke',col);ah3.setAttribute('stroke-width','2.5');ah3.setAttribute('stroke-linecap','round');var lt3=document.createElementNS('http://www.w3.org/2000/svg','text');lt3.setAttribute('x',lbx);lt3.setAttribute('y','52');lt3.setAttribute('text-anchor','middle');lt3.setAttribute('fill',col);lt3.setAttribute('font-size','10');lt3.setAttribute('font-family','monospace');lt3.setAttribute('font-weight','bold');lt3.textContent=lbl2;rg.appendChild(p3);rg.appendChild(ah3);rg.appendChild(lt3);svEl.appendChild(rg);}
+  var df=document.getElementById(footerId);if(df)df.textContent='F2 | '+(r.rot==='CW'?'CW - duzeltme CCW':'CCW - duzeltme CW');
+}
+
+function updatePostResult(){
+  var r=SESSIONS[ACTIVE].res;
+  var el=document.getElementById('vPostResult');
+  var vp=getNum('vPost');
+  if(!r||isNaN(vp)||vp<=0){if(el)el.style.display='none';return;}
+  var azalma=((r.v0-vp)/r.v0*100).toFixed(1);
+  var zoneAfter=iso10816Zone(vp,r.isoSel);
+  var zoneBefore=r.zone10816;
+  var zoneNames={'A':'A — İyi (Yeni makine beklentisi)','B':'B — Kabul edilebilir','C':'C — Alarm (Kısa vadeli)','D':'D — Tehlike (Durdur!)'};
+  var qc=zoneAfter.q==='ok'?'#00cc66':zoneAfter.q==='wa'?'#ffaa00':'#ff5533';
+  var qb=zoneAfter.q==='ok'?'rgba(0,204,102,0.08)':zoneAfter.q==='wa'?'rgba(255,170,0,0.08)':'rgba(255,85,51,0.08)';
+  var zoneIyilesti = (zoneAfter.z < zoneBefore.z); // A < B < C < D
+  var durumSatiri = '<div style="margin-top:10px;padding:8px 10px;background:rgba(0,0,0,0.2);border-radius:4px;font-size:12px">'+
+    '<span style="opacity:0.7">Önce: </span><b>Bölge '+zoneBefore.z+'</b>  →  '+
+    '<span style="opacity:0.7">Sonra: </span><b style="color:'+qc+'">'+zoneNames[zoneAfter.z]+'</b>'+
+    (zoneIyilesti?' &nbsp;&#8593; <b style="color:#00cc66">Bölge iyileşti</b>':'')+
+    '</div>';
+  var msg = vp < r.v0
+    ? ('İyileşme var — ' + (zoneIyilesti ? 'Kalite sınıfı yükseldi' : 'Aynı bölgede') )
+    : 'Titreşim artmış — konum kontrol edilmeli';
+  el.style.display='';
+  el.innerHTML='<div style="background:'+qb+';border:1.5px solid '+qc+';border-radius:4px;padding:12px;font-family:monospace;font-size:12px;color:'+qc+'">'+
+    '<div style="font-size:14px;font-weight:700;margin-bottom:8px">'+(vp<r.v0?'&#10003;':'&#9888;')+' '+msg+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'+
+    '<div style="text-align:center;background:rgba(0,0,0,0.2);padding:8px;border-radius:4px"><div style="font-size:10px;opacity:0.7">ONCESI</div><div style="font-size:20px;font-weight:800">'+r.v0.toFixed(2)+'</div><div style="font-size:10px">mm/s</div></div>'+
+    '<div style="text-align:center;background:rgba(0,0,0,0.2);padding:8px;border-radius:4px"><div style="font-size:10px;opacity:0.7">SONRASI</div><div style="font-size:20px;font-weight:800">'+vp.toFixed(2)+'</div><div style="font-size:10px">mm/s</div></div>'+
+    '<div style="text-align:center;background:rgba(0,0,0,0.2);padding:8px;border-radius:4px"><div style="font-size:10px;opacity:0.7">AZALMA</div><div style="font-size:20px;font-weight:800">%'+azalma+'</div><div style="font-size:10px">iyilesme</div></div>'+
+    '</div>'+
+    durumSatiri+
+    '<div style="margin-top:6px;font-size:11px;opacity:0.7">ISO G6.3 referans = &lt;2.3 mm/s</div>'+
+    '</div>';
+}
+
+function doReset(){SESSIONS[ACTIVE]=makeSess(ACTIVE+1);IDS.forEach(function(id){var el=document.getElementById(id);if(el){if(el.tagName==='SELECT')el.value='3';else el.value='';}});setDir('CW');document.getElementById('resBox').style.display='none';buildTabs();window.scrollTo(0,0);}
+
+// ============================================================
+// PDF - ORTAK SEKSIYON OLUSTURUCU
+// ============================================================
+function bladeNum(b,z,rot){
+  // CW donen fan icin kanat numaralandirmasi tam ters yonden (CCW) baslar
+  if(rot==='CW'){ return b===0 ? 1 : (z-b+1); }
+  return b+1;
+}
+function isoZoneColor(z){
+  var m={'A':{bg:'#e6f4ea',fg:'#00602d',bd:'#00833e'},'B':{bg:'#eef5dd',fg:'#5d7d18',bd:'#8bc34a'},'C':{bg:'#fff4d6',fg:'#8a6900',bd:'#f0ad00'},'D':{bg:'#fbe3e4',fg:'#a01722',bd:'#d32f2f'}};
+  return m[z]||m['A'];
+}
+function zoneBadge(z,label){var c=isoZoneColor(z);return '<span style="display:inline-block;background:'+c.bg+';color:'+c.fg+';border:1px solid '+c.bd+';border-radius:4px;padding:1px 8px;font-weight:700">'+(label||('B&#246;lge '+z))+'</span>';}
+
+function rotorDialSvg(r){
+  var z=r.z>0?r.z:9, cx=130, cy=140, R=92, nodeR=12, innerR=40;
+  var nearest=r.bList.length>0?r.bList[0].n:-1;
+  function pt(deg,rad){var a=deg*Math.PI/180;return [cx+rad*Math.sin(a), cy-rad*Math.cos(a)];}
+  var svg='<svg viewBox="0 0 260 280" width="100%" style="max-width:300px;display:block;margin:0 auto">';
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="#eef1f0" stroke="#d2d9d5" stroke-width="1.5"/>';
+  svg+='<text x="'+cx+'" y="'+(cy-R-6)+'" text-anchor="middle" font-size="12" fill="#555" font-weight="700">0&#176;</text>';
+  var sgn=(r.rot==='CW')?-1:1;
+  for(var b=0;b<z;b++){
+    var deg=b*(360/z), kn=b+1, np=pt(sgn*deg,R), ip=pt(sgn*deg,innerR+4), isN=(kn===nearest);
+    svg+='<line x1="'+ip[0].toFixed(1)+'" y1="'+ip[1].toFixed(1)+'" x2="'+np[0].toFixed(1)+'" y2="'+np[1].toFixed(1)+'" stroke="#c3cac6" stroke-width="3"/>';
+    svg+='<circle cx="'+np[0].toFixed(1)+'" cy="'+np[1].toFixed(1)+'" r="'+nodeR+'" fill="'+(isN?'#00833e':'#fff')+'" stroke="'+(isN?'#00602d':'#b3bcb7')+'" stroke-width="1.5"/>';
+    svg+='<text x="'+np[0].toFixed(1)+'" y="'+(np[1]+4).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+(isN?'#fff':'#566')+'">'+kn+'</text>';
+  }
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="'+innerR+'" fill="#fff" stroke="#cfd6d2" stroke-width="1"/>';
+  // rotation arc + arrowhead
+  var cwArc=r.rot==='CW';
+  var aStart=cwArc?210:330, aEnd=cwArc?(210+260):(330-260);
+  var p1=pt(aStart,innerR-7), p2=pt(aEnd,innerR-7);
+  svg+='<path d="M'+p1[0].toFixed(1)+' '+p1[1].toFixed(1)+' A '+(innerR-7)+' '+(innerR-7)+' 0 1 '+(cwArc?1:0)+' '+p2[0].toFixed(1)+' '+p2[1].toFixed(1)+'" fill="none" stroke="#6b7670" stroke-width="2.4"/>';
+  var ah=pt(aEnd,innerR-7), ahb=pt(aEnd+(cwArc?-9:9),innerR-7), aht=pt(aEnd+(cwArc?-3:3),innerR-15);
+  svg+='<polygon points="'+ah[0].toFixed(1)+','+ah[1].toFixed(1)+' '+ahb[0].toFixed(1)+','+ahb[1].toFixed(1)+' '+aht[0].toFixed(1)+','+aht[1].toFixed(1)+'" fill="#6b7670"/>';
+  svg+='<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" font-size="15" font-weight="800" fill="#333">'+(cwArc?'CW':'CCW')+'</text>';
+  // correction arrow (red dashed) - CW fan icin CCW yonde
+  var ap=pt(sgn*r.ang,R-8);
+  svg+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ap[0].toFixed(1)+'" y2="'+ap[1].toFixed(1)+'" stroke="#d32f2f" stroke-width="2.2" stroke-dasharray="6,3"/>';
+  svg+='<circle cx="'+ap[0].toFixed(1)+'" cy="'+ap[1].toFixed(1)+'" r="4.5" fill="#d32f2f"/>';
+  var lp=pt(sgn*r.ang,R+22);
+  svg+='<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+4).toFixed(1)+'" text-anchor="middle" font-size="12" font-weight="800" fill="#d32f2f">'+r.ang.toFixed(1)+'&#176;</text>';
+  svg+='</svg>';
+  return svg;
+}
+
+function genSessionHtml(r, hasPost, vPost, tn, td, eqName){
+  var ic=r.iso.q==='ok'?'#00602d':r.iso.q==='wa'?'#8a6900':'#a01722';
+  var zA={'A':'&#304;yi &#8211; Yeni makine beklentisi','B':'Kabul edilebilir &#8211; S&#252;rekli &#231;al&#305;&#351;ma','C':'Alarm &#8211; K&#305;sa vadeli','D':'Tehlike &#8211; Durdur!'};
+  var cls10N={'1':'S&#305;n&#305;f I (&lt;15 kW)','2':'S&#305;n&#305;f II (15&#8211;75 kW)','3':'S&#305;n&#305;f III (sabit zemin, &gt;75 kW)','4':'S&#305;n&#305;f IV (esnek zemin, &gt;75 kW)'};
+  var bName='&#8212;', bSign='&#8212;';
+  if(r.bList.length>0){var sd0=((r.ang-r.bList[0].d+540)%360)-180;bSign=(sd0>=0?'+':'')+sd0.toFixed(1)+'&#176;';bName='Kanat '+r.bList[0].n+' ('+r.bList[0].d.toFixed(1)+'&#176;)';}
+  var eqTitle=eqName?eqName:(tn+'. \u00c7al\u0131\u015fma');
+  var g16q=r.iso.q==='ok'?'iok':r.iso.q==='wa'?'iwarn':'ibad';
+  var isoDesc={'G1':'Hassas','G2.5':'&#304;yi','G6.3':'Normal','G16':'Kaba &#8212; &#304;yile&#351;tirme &#246;nerilir','G40':'&#199;ok kaba','G40+':'Kritik'};
+  var isoDescStr=isoDesc[r.iso.c]||r.iso.d;
+
+  function header(dark){
+    return '<div class="topbar"><img src="data:image/png;base64,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" class="logo"/><div class="dept">G&#252;venilirlik<br>Ba&#351; M&#252;hendisli&#287;i</div></div>'+
+      '<div class="hdr"><div><h1>Fan Balans Raporu</h1><div class="hsub">'+eqTitle+'</div></div><span class="dt">'+I_CAL+' '+td+'</span></div>';
+  }
+  function rtitle(t){return '<div class="rtitle">'+t+'</div>';}
+  function snum2(n,t){return '<div class="sechead2"><span class="snum2">'+n+'</span><span class="stit2">'+t+'</span></div>';}
+
+  // ===== PAGE 1 =====
+  var page1='';
+  if(hasPost&&!isNaN(vPost)){
+    var az=((r.v0-vPost)/r.v0*100).toFixed(1);
+    var zpA=iso10816Zone(vPost,r.isoSel), zpB=r.zone10816;
+    var iyi=(zpA.z<zpB.z);
+    var pc=zpA.q==='ok'?'#00602d':zpA.q==='wa'?'#8a6900':'#a01722';
+    var durumUp=(vPost<r.v0?('&#304;Y&#304;LE&#350;ME VAR &#8212; '+(iyi?'KAL&#304;TE SINIFI Y&#220;KSELD&#304;':'AYNI B&#214;LGEDE DEVAM')):'T&#304;TRE&#350;&#304;M ARTMI&#350;');
+    var basariOk=vPost<r.tgt||zpA.z==='A';
+
+    page1='<div class="pg">'+header()+
+      '<div class="okbanner">'+I_CHECK+'<div><b>'+durumUp+'</b><br>B&#246;lge: '+zoneBadge(zpB.z,zpB.z)+' &#8594; '+zoneBadge(zpA.z,zpA.z+' ('+zA[zpA.z]+')')+'</div></div>'+
+      // stat cards with icons
+      '<div class="cards">'+
+      '<div class="statcard"><div class="sccirc" style="background:#fde8e8;color:#c0392b">'+I_PULSE+'</div><div class="sctxt"><div class="sclbl">BALANS &#214;NCES&#304;</div><div class="scval" style="color:#c0392b">'+r.v0.toFixed(2)+'</div><div class="scunit">mm/s</div></div></div>'+
+      '<div class="statcard"><div class="sccirc" style="background:#e6f4ea;color:#00833e">'+I_FAN+'</div><div class="sctxt"><div class="sclbl">BALANS SONRASI</div><div class="scval" style="color:#00833e">'+vPost.toFixed(2)+'</div><div class="scunit">mm/s</div></div></div>'+
+      '<div class="statcard"><div class="sccirc" style="background:#e6f4ea;color:#00833e">'+I_PCT+'</div><div class="sctxt"><div class="sclbl">AZALMA</div><div class="scval" style="color:#00833e">%'+az+'</div><div class="scunit">iyile&#351;me</div></div></div>'+
+      '</div>'+
+      // two columns: uygulanan düzeltme | rotor dial
+      '<table class="twocol"><tr><td style="width:50%">'+
+        rtitle('UYGULANAN D&#220;ZELTME')+
+        '<div class="iconlist">'+
+        '<div class="ir">'+I_WEIGHT+'<span class="irl">D&#252;zeltme A&#287;&#305;rl&#305;&#287;&#305;</span><span class="irv" style="color:#c0392b">'+r.wc.toFixed(1)+' gram</span></div>'+
+        '<div class="ir">'+I_ANGLE+'<span class="irl">Yerle&#351;tirme A&#231;&#305;s&#305;</span><span class="irv" style="color:#c0392b">'+r.ang.toFixed(1)+'&#176;</span></div>'+
+        '<div class="ir">'+I_FLAG+'<span class="irl">En Yak&#305;n Kanat</span><span class="irv" style="color:#00602d">'+bName+'</span></div>'+
+        '<div class="ir">'+I_WAVE+'<span class="irl">A&#231;&#305;sal Fark</span><span class="irv">'+(r.bList.length>0?bSign:'&#8212;')+'</span></div>'+
+        '<div class="ir">'+I_GAUGE+'<span class="irl">Fan Yar&#305;&#231;ap&#305;</span><span class="irv">'+r.fr.toFixed(0)+' mm</span></div>'+
+        '<div class="ir" style="border-bottom:none">'+I_ROTATE+'<span class="irl">D&#246;n&#252;&#351; Y&#246;n&#252;</span><span class="irv" style="color:#00602d">'+(r.rot==='CW'?'Saat Y&#246;n&#252; (CW)':'Tersi (CCW)')+'</span></div>'+
+        '</div>'+
+      '</td><td style="width:50%">'+
+        rtitle('ROTOR / KANAT POZ&#304;SYONU')+
+        '<div class="dialbox">'+rotorDialSvg(r)+'</div>'+
+      '</td></tr></table>'+
+      // doğrulama ve yorum
+      rtitle('DO&#286;RULAMA VE YORUM')+
+      '<table class="lr2">'+
+      '<tr><td class="lc">'+I_SHIELD+'<b>ISO 10816 De&#287;erlendirmesi</b></td><td>'+cls10N[r.isoSel]+' kapsam&#305;nda '+zoneBadge(zpA.z)+' ('+zA[zpA.z]+')</td></tr>'+
+      '<tr><td class="lc">'+I_PULSE2+'<b>Do&#287;rulama &#214;l&#231;&#252;m&#252;</b></td><td style="color:'+pc+';font-weight:700">'+vPost.toFixed(2)+' mm/s</td></tr>'+
+      '<tr><td class="lc">'+I_CLIP+'<b>Saha Sonucu ve Yorum</b></td><td style="font-size:9.5pt;color:#555">'+(vPost<r.tgt?'Titre&#351;im seviyesi iyi seviyededir.':'Titre&#351;im seviyesi iyi seviyededir.<br>ISO 1940-1 a&#231;&#305;s&#305;ndan ek iyile&#351;tirme de&#287;erlendirilebilir.')+'</td></tr>'+
+      '</table>'+
+      // sonuç (trophy)
+      '<div class="trophy">'+I_TROPHY+'<div><b style="font-size:11pt">SONU&#199;: FAN DENGELEME &#304;&#350;LEM&#304; '+(basariOk?'BA&#350;ARIYLA UYGULANMI&#350;TIR.':'UYGULANMI&#350;, KONTROL &#214;NER&#304;L&#304;R.')+'</b><br>'+zoneBadge(zpA.z)+' seviyesinde do&#287;rulanm&#305;&#351;t&#305;r.</div></div>'+
+      '</div>';
+  }
+
+  // ===== PAGE 2: TEKNIK DETAYLAR =====
+  var brows='';
+  if(r.bList.length>0){r.bList.slice(0,3).forEach(function(b,i){var sd=((r.ang-b.d+540)%360)-180;var fk=(sd>=0?'+':'')+sd.toFixed(1)+'&#176;';brows+='<tr'+(i===0?' class="bestrow"':'')+'><td'+(i===0?' style="color:#00602d;font-weight:700"':'')+'>Kanat '+b.n+'</td><td>'+b.d.toFixed(1)+'&#176;</td><td>'+fk+'</td><td'+(i===0?' style="color:#00602d;font-weight:700"':'')+'>'+(i===0?'&#10003; En yak&#305;n':i===1?'2. yak&#305;n':'3. yak&#305;n')+'</td></tr>';});}
+  else brows='<tr><td colspan="4" style="text-align:center;color:#999">Girilmedi</td></tr>';
+
+  var page2='<div class="pg pgbreak">'+
+    '<div class="tbar">'+I_GEAR+' TEKN&#304;K DETAYLAR</div>'+
+    // 1 + 2 two cols
+    '<table class="twocol"><tr><td style="width:50%">'+
+      snum2('1','G&#304;R&#304;&#350; DE&#286;ERLER&#304;')+
+      '<table class="grid"><tr><th>Parametre</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>'+
+      '<tr><td>Referans Titre&#351;im (A&#287;.s&#305;z)</td><td>V&#8320;</td><td>'+r.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
+      '<tr><td>0&#176; Titre&#351;im</td><td>V_A</td><td>'+r.vA.toFixed(2)+'</td><td>mm/s</td></tr>'+
+      '<tr><td>120&#176; Titre&#351;im</td><td>V_B</td><td>'+r.vB.toFixed(2)+'</td><td>mm/s</td></tr>'+
+      '<tr><td>240&#176; Titre&#351;im</td><td>V_C</td><td>'+r.vC.toFixed(2)+'</td><td>mm/s</td></tr>'+
+      '<tr><td>Deneme A&#287;&#305;rl&#305;&#287;&#305;</td><td>W_t</td><td>'+r.wt.toFixed(1)+'</td><td>gram</td></tr>'+
+      '<tr><td>Fan K&#252;tlesi</td><td>m</td><td>'+r.fm.toFixed(1)+'</td><td>kg</td></tr>'+
+      '<tr><td>Fan Yar&#305;&#231;ap&#305;</td><td>r</td><td>'+r.fr.toFixed(0)+'</td><td>mm</td></tr>'+
+      '<tr><td>&#199;al&#305;&#351;ma Devri</td><td>n</td><td>'+r.rpm+'</td><td>RPM</td></tr>'+
+      '<tr><td>A&#231;&#305;sal H&#305;z</td><td>&#969;</td><td>'+r.om.toFixed(3)+'</td><td>rad/s</td></tr>'+
+      (r.z>0?'<tr><td>Kanat Say&#305;s&#305;</td><td>z</td><td>'+r.z+'</td><td>adet</td></tr>':'')+
+      '<tr><td>ISO 10816 S&#305;n&#305;f&#305;</td><td>&#8212;</td><td colspan="2" style="font-size:8pt">'+cls10N[r.isoSel]+'</td></tr>'+
+      '<tr><td>D&#246;n&#252;&#351; Y&#246;n&#252;</td><td>&#8212;</td><td colspan="2">'+(r.rot==='CW'?'Saat Y&#246;n&#252; (CW)':'Tersi (CCW)')+'</td></tr></table>'+
+    '</td><td style="width:50%;vertical-align:top">'+
+      snum2('2','ARA HESAPLAMA DE&#286;ERLER&#304;')+
+      '<table class="grid"><tr><th>Sembol</th><th>Anlam</th><th>Hesaplama</th><th>Sonu&#231;</th></tr>'+
+      '<tr><td>dA</td><td>0&#176; etki fark&#305;</td><td>V_A&#178;&#8722;V&#8320;&#178;</td><td>'+r.dA.toFixed(4)+'</td></tr>'+
+      '<tr><td>dB</td><td>120&#176; etki fark&#305;</td><td>V_B&#178;&#8722;V&#8320;&#178;</td><td>'+r.dB.toFixed(4)+'</td></tr>'+
+      '<tr><td>dC</td><td>240&#176; etki fark&#305;</td><td>V_C&#178;&#8722;V&#8320;&#178;</td><td>'+r.dC.toFixed(4)+'</td></tr>'+
+      '<tr><td>x</td><td>Yatay bile&#351;en</td><td>(2dA&#8722;dB&#8722;dC)/3</td><td>'+r.x.toFixed(4)+'</td></tr>'+
+      '<tr><td>y</td><td>Dikey bile&#351;en</td><td>(dB&#8722;dC)/&#8730;3</td><td>'+r.y.toFixed(4)+'</td></tr>'+
+      '<tr><td>&#952;</td><td>Dengesizlik y&#246;n&#252;</td><td>atan2(y,x)</td><td>'+r.tDeg.toFixed(2)+'&#176;</td></tr>'+
+      '<tr><td>&#952;_d&#252;z</td><td>D&#252;zeltme konumu</td><td>&#952;+180&#176;</td><td>'+r.ang.toFixed(2)+'&#176;</td></tr>'+
+      '<tr><td>|UV|</td><td>Vekt&#246;r b&#252;y&#252;kl&#252;&#287;&#252;</td><td>&#8730;(x&#178;+y&#178;)</td><td>'+r.uMag.toFixed(4)+'</td></tr>'+
+      '<tr><td>W_d&#252;z</td><td>D&#252;zeltme a&#287;&#305;rl&#305;&#287;&#305;</td><td>2V&#8320;&#178;W_t/|UV|</td><td><b>'+r.wc.toFixed(1)+' g</b></td></tr></table>'+
+      '<div style="height:9px"></div>'+
+      snum2('6','EN YAKIN KANAT ANAL&#304;Z&#304;')+
+      '<table class="grid"><tr><th>Kanat</th><th>Konum</th><th>Fark</th><th>Durum</th></tr>'+brows+'</table>'+
+    '</td></tr></table>'+
+    // 3 full width
+    snum2('3','HESAPLANAN SONU&#199;LAR')+
+    '<table class="grid"><tr><th>Sonu&#231;</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>'+
+    '<tr><td>D&#252;zeltme A&#287;&#305;rl&#305;&#287;&#305;</td><td>W_d&#252;z</td><td><b style="color:#c0392b;font-size:11pt">'+r.wc.toFixed(1)+' gram</b></td><td>gram</td></tr>'+
+    '<tr><td>Yerle&#351;tirme A&#231;&#305;s&#305;</td><td>&#952;_d&#252;z</td><td><b style="color:#1c6fb5;font-size:11pt">'+r.ang.toFixed(1)+'&#176;</b></td><td>0&#176;\u2019den</td></tr>'+
+    '<tr><td>En Yak&#305;n Kanat</td><td>&#8212;</td><td style="color:#00602d;font-weight:700">'+bName+'</td><td>fark: '+(r.bList.length>0?bSign:'&#8212;')+'</td></tr>'+
+    '<tr><td>Dengesizlik</td><td>U=W_d&#252;z&#215;r</td><td>'+r.U.toFixed(0)+'</td><td>g&#183;mm</td></tr>'+
+    '<tr><td>&#214;zg&#252;l Dengesizlik</td><td>e=U/m</td><td>'+r.e.toFixed(1)+'</td><td>&#956;m</td></tr>'+
+    '<tr><td>Dengesizlik Kuvveti (yatak y&#252;k&#252;)</td><td>F=(W/1000)(r/1000)&#969;&#178;</td><td style="font-weight:700">'+r.F_unbal.toFixed(1)+'</td><td>Newton</td></tr>'+
+    '</table>'+
+    // 4 + 5 two cols
+    '<table class="twocol"><tr><td style="width:50%">'+
+      snum2('4','ISO 10816 T&#304;TRE&#350;&#304;M ALARM SINIFI')+
+      '<div class="ibox iok"><b>ISO '+r.iso.c+'</b> | G = '+r.G.toFixed(2)+' mm/s | '+isoDescStr+'</div>'+
+      '<table class="grid"><tr><th>Parametre</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>'+
+      '<tr><td>G De&#287;eri</td><td>G=(e/1000)&#969;</td><td style="color:'+ic+';font-weight:700">'+r.G.toFixed(2)+' &#8594; '+r.iso.c+'</td><td>mm/s</td></tr>'+
+      '<tr><td>&#304;zin verilen (G6.3)</td><td>U_per</td><td>'+r.U_per.toFixed(0)+'</td><td>g&#183;mm</td></tr>'+
+      '<tr><td>Hesaplanan</td><td>U</td><td>'+r.U.toFixed(0)+'</td><td>g&#183;mm</td></tr>'+
+      '<tr><td>Limit Oran&#305;</td><td>U/U_per</td><td style="color:'+(r.U_ratio<1?'#00602d':'#a01722')+';font-weight:700">&#215;'+r.U_ratio.toFixed(2)+(r.U_ratio<1?'':' A&#350;ILDI')+'</td><td>&#8212;</td></tr>'+
+      (r.bpf>0?'<tr><td>BPF</td><td>z&#215;f</td><td>'+r.bpf.toFixed(1)+'</td><td>Hz</td></tr>':'')+'</table>'+
+    '</td><td style="width:50%">'+
+      snum2('5','ISO 1940-1 KAL&#304;TE SINIFI')+
+      '<div class="iconlist">'+
+      '<div class="ir">'+I_WAVE2+'<span class="irl">Dengesizlik</span><span class="irv">U = '+r.U.toFixed(0)+' g&#183;mm</span></div>'+
+      '<div class="ir">'+I_GEAR2+'<span class="irl">&#214;zg&#252;l Dengesizlik</span><span class="irv">e = '+r.e.toFixed(1)+' &#956;m</span></div>'+
+      '<div class="ir" style="border-bottom:none">'+I_SHIELD2+'<span class="irl">Dengesizlik Kuvveti</span><span class="irv">F = '+r.F_unbal.toFixed(1)+' N</span></div>'+
+      '</div>'+
+      '<div class="ibox '+g16q+'" style="margin-top:8px">ISO '+r.iso.c+' | G = '+r.G.toFixed(2)+' mm/s | '+isoDescStr+'</div>'+
+    '</td></tr></table>'+
+    // 6 + 7 two cols
+    snum2('7','YERLE&#350;T&#304;RME TAL&#304;MATI')+
+      '<div class="steps2 steps2wide">'+
+      '<div class="st2"><span class="stn">1</span><span class="stx">Ekipman&#305; durdurun &#8212; LOTO uygulay&#305;n</span></div>'+
+      '<div class="st2"><span class="stn">2</span><span class="stx">0&#176; referans&#305;ndan <b>'+r.ang.toFixed(1)+'&#176;</b> konumunu i&#351;aretleyin</span></div>'+
+      '<div class="st2"><span class="stn">3</span><span class="stx">En yak&#305;n kanat: <b>'+bName+'</b></span></div>'+
+      '<div class="st2"><span class="stn">4</span><span class="stx"><b>'+r.wc.toFixed(1)+' gram</b> a&#287;&#305;rl&#305;k tak&#305;n (r='+r.fr.toFixed(0)+' mm)</span></div>'+
+      '<div class="st2"><span class="stn">5</span><span class="stx">Ekipman&#305; &#231;al&#305;&#351;t&#305;r&#305;n, do&#287;rulama &#246;l&#231;&#252;m&#252; al&#305;n</span></div>'+
+      '<div class="st2"><span class="stn">6</span><span class="stx">Do&#287;rulama &#246;l&#231;&#252;m&#252; ISO '+r.iso.c+' s&#305;n&#305;f&#305;na uygun olmal&#305;</span></div>'+
+      '</div>'+
+    '<div class="note">'+I_INFO+' Not: T&#252;m hesaplamalar ISO 10816-3 ve ISO 1940-1 standartlar&#305;na uygun olarak yap&#305;lm&#305;&#351;t&#305;r.</div>'+
+    '</div>';
+
+  return page1 + (hasPost?page2:'');
+}
+
+// ===== ICONS =====
+var I_CAL='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="2" style="vertical-align:-1px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+var I_CHECK='<svg width="30" height="30" viewBox="0 0 24 24" fill="#00833e" style="flex-shrink:0"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function _ic(p,c){return '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="'+(c||'currentColor')+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">'+p+'</svg>';}
+var I_PULSE=_ic('<path d="M2 12h4l2.5-7 4 14 2.5-7H22"/>','#c0392b');
+var I_PULSE2=_ic('<path d="M2 12h4l2.5-7 4 14 2.5-7H22"/>','#c0392b');
+var I_FAN=_ic('<circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-7-1-8-2 1-3 4-3 6m4 4c4 0 7 1 8-1-1-2-4-3-6-3m-4 4c0 4-1 7 1 8 2-1 3-4 3-6m-4-2c-4 0-7-1-8 1 1 2 4 3 6 3"/>','#00833e');
+var I_PCT=_ic('<path d="M21 12a9 9 0 11-3.5-7.1"/><path d="M21 4v4h-4"/><circle cx="9" cy="9" r="1.5"/><circle cx="15" cy="15" r="1.5"/><line x1="15" y1="9" x2="9" y2="15"/>','#00833e');
+var I_WEIGHT=_ic('<path d="M6 8h12l1.5 12H4.5z"/><circle cx="12" cy="6" r="2"/>','#c0392b');
+var I_ANGLE=_ic('<path d="M4 19h16M4 19L18 7"/><path d="M4 19a8 8 0 018-8" stroke-dasharray="2,2"/>','#c0392b');
+var I_FLAG=_ic('<path d="M5 21V4M5 5h11l-2 4 2 4H5"/>','#00833e');
+var I_WAVE=_ic('<path d="M2 12c2-6 4-6 6 0s4 6 6 0 4-6 6 0"/>','#555');
+var I_WAVE2=_ic('<path d="M2 12c2-6 4-6 6 0s4 6 6 0 4-6 6 0"/>','#00833e');
+var I_GAUGE=_ic('<path d="M4 16a8 8 0 0116 0"/><line x1="12" y1="16" x2="16" y2="10"/>','#555');
+var I_ROTATE=_ic('<path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 3v5h-5"/>','#00833e');
+var I_SHIELD=_ic('<path d="M12 3l7 2.5V11c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5V5.5z"/><path d="M9 12l2 2 4-4"/>','#00833e');
+var I_SHIELD2=_ic('<path d="M12 3l7 2.5V11c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5V5.5z"/>','#00833e');
+var I_TARGET=_ic('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>','#00833e');
+var I_TARGET2=_ic('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>','#00833e');
+var I_CLIP=_ic('<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>','#00833e');
+var I_GEAR=_ic('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>','#fff');
+var I_GEAR2=_ic('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>','#00833e');
+var I_TROPHY='<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#00833e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M8 21h8M12 17v4M6 4h12v5a6 6 0 01-12 0z" fill="#e6f4ea"/><path d="M6 6H3v2a3 3 0 003 3M18 6h3v2a3 3 0 01-3 3"/></svg>';
+var I_INFO=_ic('<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.5" fill="#888"/>','#888');
+
+function getPdfCss(){
+  return '*{box-sizing:border-box;margin:0;padding:0}'+
+    'body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:9pt;color:#1a1a1a}'+
+    '.pg{max-width:730px;margin:0 auto;padding:10px 16px}'+
+    '.pgbreak{page-break-before:always;break-before:page}'+
+    '.topbar{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 7px}'+
+    '.logo{height:32px}'+
+    '.dept{text-align:right;font-size:9pt;font-weight:700;color:#222;line-height:1.35}'+
+    '.hdr{background:#111;color:#fff;padding:9px 15px;display:flex;justify-content:space-between;align-items:center;border-radius:3px}'+
+    '.hdr h1{font-size:14pt;margin:0;color:#fff;font-weight:800}'+
+    '.hsub{font-size:10pt;color:#cfcfcf;margin-top:2px}'+
+    '.dt{font-size:10pt;color:#eee;white-space:nowrap}'+
+    '.tbar{background:#111;color:#fff;padding:6px 13px;border-radius:3px;font-size:10pt;font-weight:800;letter-spacing:0.5px;display:flex;align-items:center;gap:8px;margin-bottom:7px}'+
+    '.rtitle{font-size:9.5pt;font-weight:800;text-transform:uppercase;color:#1a1a1a;border-bottom:2px solid #c0392b;padding-bottom:3px;margin:10px 0 6px;letter-spacing:0.3px;white-space:nowrap;overflow:hidden;line-height:1.25}'+
+    '.sechead2{display:flex;align-items:center;gap:6px;margin:7px 0 4px}'+
+    '.snum2{width:19px;height:19px;border-radius:3px;background:#c0392b;color:#fff;font-size:10pt;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}'+
+    '.stit2{font-size:9.5pt;font-weight:800;color:#1a1a1a;letter-spacing:0.3px}'+
+    '.okbanner{display:flex;align-items:center;gap:10px;background:#eef7f0;border:1px solid #b5dcc0;border-radius:6px;padding:9px 13px;font-size:9pt;color:#1a5a32;line-height:1.45;margin:5px 0}'+
+    '.cards{display:flex;gap:9px;margin:9px 0}'+
+    '.statcard{flex:1;min-width:0;border:1px solid #e2e2e2;border-radius:8px;padding:9px 6px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;background:#fff;text-align:center}'+
+    '.sccirc{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:2px}'+
+    '.sctxt{width:100%}'+
+    '.sclbl{font-size:8pt;color:#888;font-weight:700;letter-spacing:0.5px;min-height:22px;display:flex;align-items:center;justify-content:center;line-height:1.15}'+
+    '.scval{font-size:18pt;font-weight:800;line-height:1.05;white-space:nowrap}'+
+    '.scunit{font-size:8.5pt;color:#999}'+
+    'table{width:100%;border-collapse:collapse}'+
+    '.twocol{border-collapse:separate;border-spacing:0;table-layout:fixed;width:100%}.grid{table-layout:auto;width:100%;word-break:normal;overflow-wrap:normal}.grid td,.grid th{white-space:normal}'+
+    '.twocol>tbody>tr>td{vertical-align:top;padding:0 9px}'+
+    '.twocol>tbody>tr>td:first-child{padding-left:0}.twocol>tbody>tr>td:last-child{padding-right:0}'+
+    '.iconlist{border:1px solid #ebebeb;border-radius:7px;padding:2px 12px}'+
+    '.ir{display:flex;align-items:center;gap:9px;padding:4px 0;border-bottom:1px solid #f0f0f0}'+
+    '.irl{flex:1;font-size:9pt;color:#333}'+
+    '.irv{font-weight:700;font-size:9pt}'+
+    '.lr2{margin-top:2px}'+
+    '.lr2 td{border:1px solid #e8e8e8;padding:5px 11px;font-size:9pt;vertical-align:middle}'+
+    '.lr2 td.lc{background:#fafafa;width:42%}'+
+    '.lr2 td.lc svg{vertical-align:-3px;margin-right:7px}'+
+    '.grid td,.grid th{border:1px solid #e4e4e4;padding:2px 5px;font-size:7pt;word-break:normal;hyphens:none}'+
+    '.grid th{background:#f3f5f4;font-weight:700;text-align:left;color:#333}'+
+    '.grid .bestrow{background:#eef7f0}'+
+    '.ibox{padding:6px 10px;border-radius:5px;margin-bottom:5px;font-size:8.5pt}'+
+    '.iok{background:#e6f4ea;border:1px solid #00833e;color:#00602d}'+
+    '.iwarn{background:#fff4d6;border:1px solid #f0ad00;color:#8a6900}'+
+    '.ibad{background:#fbe3e4;border:1px solid #d32f2f;color:#a01722}'+
+    '.trophy{display:flex;align-items:center;gap:13px;background:#f4faf6;border:1px solid #cfe6d6;border-radius:7px;padding:11px 15px;font-size:9.5pt;line-height:1.5;margin-top:7px}'+
+    '.steps2{border:1px solid #ebebeb;border-radius:7px;padding:8px 12px}'+
+    '.st2{display:flex;align-items:flex-start;gap:8px;padding:2.5px 0;font-size:8.5pt;line-height:1.3}.stx{flex:1;min-width:0}.steps2wide{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 18px;align-items:start}'+
+    '.stn{width:18px;height:18px;border-radius:50%;background:#00833e;color:#fff;font-size:8.5pt;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}'+
+    '.dialbox{border:1px solid #ebebeb;border-radius:7px;padding:6px;text-align:center}.dialbox svg{max-width:230px!important}.note{display:flex;align-items:center;gap:7px;background:#f6f6f6;border-radius:6px;padding:7px 11px;font-size:8pt;color:#777;margin-top:7px}'+
+    '.pbtn{display:block;width:auto;min-width:340px;max-width:480px;margin:20px auto 12px;padding:16px 36px;background:#00833e;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;box-shadow:0 2px 10px rgba(0,131,62,0.35);text-align:center}'+
+    '.pbtn:hover{background:#00602d}'+
+    '@media print{.pbtn,.nop{display:none!important}@page{margin:8mm;size:A4}#pfwrap{zoom:1!important;transform:none!important;width:auto!important}.pg{padding:0 6mm!important;zoom:1!important}html,body{height:auto!important}.okbanner{margin-top:5mm!important}.cards{margin:8mm 0!important}.lr2{margin-top:5mm!important}.trophy{margin-top:9mm!important}.dialbox svg{max-width:270px!important}.dialbox{padding:10px!important}}';
+}
+
+function openPdfWin(bodyHtml,title){
+  var h='<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+title+'</title>'+
+    '<style>'+getPdfCss()+'html,body{margin:0;overflow-x:hidden}#pfwrap{width:760px;margin:0 auto;transform-origin:top left}@media print{#pfwrap{zoom:1!important;transform:none!important;width:auto!important;margin:0!important}html,body{overflow:visible;width:auto}}<\/style><\/head><body>'+
+    '<div id="pfwrap">'+bodyHtml+'<\/div>'+
+    '<button class="pbtn" onclick="window.print()">&#11015; PDF OLARAK KAYDET / YAZDIR</button>'+
+    '<script>(function(){if(window.self!==window.top)return;function fit(){var w=document.getElementById("pfwrap");if(!w)return;var av=document.documentElement.clientWidth||window.innerWidth;w.style.zoom=av<772?(av/772):1;}window.addEventListener("resize",fit);window.addEventListener("load",fit);setTimeout(fit,30);fit();})();<\/script>'+
+    '<\/body><\/html>';
+  var pw=null;try{pw=window.open('','_blank');}catch(e){}
+  if(pw&&pw.document){pw.document.write(h);pw.document.close();return;}
+  var old2=document.getElementById('_pf');if(old2)old2.parentNode.removeChild(old2);
+  var ifr=document.createElement('iframe');ifr.id='_pf';
+  ifr.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff';
+  document.body.appendChild(ifr);ifr.contentDocument.write(h);ifr.contentDocument.close();
+  var scaleIfr=function(){try{var d=ifr.contentDocument;var w=d&&d.getElementById("pfwrap");if(w){var av=ifr.getBoundingClientRect().width||window.innerWidth||390;var s=av<772?(av/772):1;w.style.zoom=s;}}catch(e){}};
+  setTimeout(scaleIfr,60);setTimeout(scaleIfr,400);window.addEventListener("resize",scaleIfr);
+  var cb=document.createElement('button');cb.textContent='X Kapat';
+  cb.style.cssText='position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer';
+  cb.onclick=function(){document.body.removeChild(ifr);document.body.removeChild(cb);};
+  document.body.appendChild(cb);
+}
+
+function doPdf(){
+  var r=SESSIONS[ACTIVE].res;if(!r){alert('Once hesaplama yapin.');return;}
+  var tn=ACTIVE+1,td=new Date().toLocaleDateString('tr-TR');
+  var vPost=getNum('vPost'),hasPost=(!isNaN(vPost)&&vPost>0);
+  var eqEl=document.getElementById('equipName');
+  var eqName=eqEl?eqEl.value.trim():'';
+  openPdfWin(genSessionHtml(r,hasPost,vPost,tn,td,eqName),'Fan Balans '+tn+'. Çalışma');
+}
+
+
+function initApp(){var saved='';try{saved=localStorage.getItem('theme')||'dark';}catch(e){saved='dark';}if(saved==='light'){document.body.classList.add('light');document.getElementById('themeBtn').textContent='😎';}else{document.body.classList.remove('light');document.getElementById('themeBtn').textContent='🙂';}buildTabs();drawTicks('dTicks');}
+</script>
 </head>
 <body>
 <div style="max-width:620px;margin:0 auto;padding:4px 0 80px">
-
-<h1>Tek Düzlem <b>Fan Balans</b></h1>
-<div class="sub">// Kocaeli İGSAŞ Fabrikası - Thearle Metodu - v3.0</div>
-
+<div class="hrow">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="width:6px;height:42px;background:var(--igsas);border-radius:2px;flex-shrink:0"></div>
+    <div>
+      <div style="font-size:10px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;letter-spacing:3px;color:var(--igsas);text-transform:uppercase;margin-bottom:2px">İGSAŞ Güvenilirlik</div>
+      <h1 style="font-size:21px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase">Fan Balans Aracı</h1>
+    </div>
+  </div>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🙂</button>
+</div>
 <div class="tabs" id="tabBar"></div>
-
 <div class="card">
-  <div class="lbl">Titreşim Ölçümleri (mm/s)</div>
-  <div class="tit">Veri Girişi</div>
-  <div class="ig">
-    <div class="ilbl"><span class="dot" style="background:#888"></span>Ağırlıksız (V₀)</div>
-    <input type="text" id="v0" inputmode="decimal" placeholder="25.30">
-  </div>
-  <div class="ig">
-    <div class="ilbl"><span class="dot" style="background:#ff5533"></span>Deneme 0° (V_A)</div>
-    <input type="text" id="vA" inputmode="decimal" placeholder="14.50">
-  </div>
-  <div class="ig">
-    <div class="ilbl"><span class="dot" style="background:#ffaa00"></span>Deneme 120° (V_B)</div>
-    <input type="text" id="vB" inputmode="decimal" placeholder="8.20">
-  </div>
-  <div class="ig">
-    <div class="ilbl"><span class="dot" style="background:#4488ff"></span>Deneme 240° (V_C)</div>
-    <input type="text" id="vC" inputmode="decimal" placeholder="30.10">
-  </div>
+  <div class="lbl">Fan Tarafı Ölçümleri</div>
+  <div class="tit">4 Tur Titreşim Ölçümü</div>
+  <div class="ig"><div class="ilbl"><span class="dot" style="background:#888"></span>1. Ölçüm — Ağırlıksız (V₀)</div><input type="text" id="v0" inputmode="decimal" placeholder="25.30"><div class="iunit">mm/s — 0 to peak — 1X bileşeni</div></div>
+  <div class="ig"><div class="ilbl"><span class="dot" style="background:#ff5533"></span>2. Ölçüm — Deneme ağırlığı 0° (V_A)</div><input type="text" id="vA" inputmode="decimal" placeholder="14.50"><div class="iunit">mm/s — 0 to peak</div></div>
+  <div class="ig"><div class="ilbl"><span class="dot" style="background:#ffaa00"></span>3. Ölçüm — Deneme ağırlığı 120° (V_B)</div><input type="text" id="vB" inputmode="decimal" placeholder="8.20"><div class="iunit">mm/s — 0 to peak</div></div>
+  <div class="ig"><div class="ilbl"><span class="dot" style="background:#4488ff"></span>4. Ölçüm — Deneme ağırlığı 240° (V_C)</div><input type="text" id="vC" inputmode="decimal" placeholder="30.10"><div class="iunit">mm/s — 0 to peak</div></div>
+  <div class="hint"><b>Ölçüm noktası:</b> Fan yatak gövdesinden radyal yönde. Her turda deneme ağırlığını söküp sonraki konuma takın.</div>
 </div>
-
 <div class="card">
-  <div class="lbl">Ekipman Özellikleri</div>
+  <div class="lbl">Deneme Ağırlığı &amp; Fan Bilgileri</div>
   <div class="tit">Fan Parametreleri</div>
+  <div class="ig"><div class="ilbl">Fan Kütlesi (m)</div><input type="text" id="fanM" inputmode="decimal" placeholder="450" oninput="updateWtHint()"><div class="iunit">kg — ISO G sınıfı ve U_per için gerekli</div></div>
+  <div class="ig"><div class="ilbl">Fan Yarıçapı (r)</div><input type="text" id="fanR" inputmode="decimal" placeholder="1120" oninput="updateWtHint()"><div class="iunit">mm — ağırlığın takılacağı yarıçap</div></div>
+  <div class="ig"><div class="ilbl">Çalışma Devri (n)</div><input type="text" id="rpm" inputmode="numeric" placeholder="1200" oninput="updateWtHint()"><div class="iunit">RPM</div></div>
+  <div class="ig"><div class="ilbl">Kanat Sayısı (z)</div><input type="text" id="blades" inputmode="numeric" placeholder="12"><div class="iunit">adet — opsiyonel</div></div>
+  <div class="ig"><div class="ilbl">Deneme Ağırlığı (W_t)</div><input type="text" id="wt" inputmode="decimal" placeholder="105.3"><div class="iunit">gram &nbsp;<span id="wtHint" style="color:#00cc66;font-weight:700"></span></div></div>
   <div class="ig">
-    <div class="ilbl">Deneme Ağırlığı (W_t) [gram]</div>
-    <input type="text" id="wt" inputmode="decimal" placeholder="105.3">
-  </div>
-  <div class="ig">
-    <div class="ilbl">Fan Kütlesi (m) [kg]</div>
-    <input type="text" id="fanM" inputmode="decimal" placeholder="450">
-  </div>
-  <div class="ig">
-    <div class="ilbl">Fan Yarıçapı (r) [mm]</div>
-    <input type="text" id="fanR" inputmode="decimal" placeholder="1120">
-  </div>
-  <div class="ig">
-    <div class="ilbl">Çalışma Devri (n) [RPM]</div>
-    <input type="text" id="rpm" inputmode="numeric" placeholder="1200">
-  </div>
-  <div class="ig">
-    <div class="ilbl">Kanat Sayısı (z)</div>
-    <input type="text" id="blades" inputmode="numeric" placeholder="12">
-  </div>
-  <div class="ig">
-    <div class="ilbl">Hedef ISO Kalite Sınıfı</div>
-    <select id="isoTarget">
-        <option value="2.5">G 2.5 (Hassas Fanlar)</option>
-        <option value="6.3" selected>G 6.3 (Standart Endüstriyel)</option>
-        <option value="16">G 16 (Kaba Dağılım)</option>
+    <div class="ilbl">ISO 10816 Makine Sınıfı</div>
+    <select id="iso10816">
+      <option value="1">Sınıf I — Küçük pompa / fan (&lt; 15 kW)</option>
+      <option value="2">Sınıf II — Orta motor / pompa grubu (15–75 kW)</option>
+      <option value="3" selected>Sınıf III — Büyük fan/pompa, beton veya çelik sabit zemin (&gt; 75 kW)</option>
+      <option value="4">Sınıf IV — Büyük fan/pompa, yaylı veya şok emicili zemin (&gt; 75 kW)</option>
     </select>
+    <div class="iunit">Alarm bandı değerlendirmesi için — V₀ bu sınıfa göre yorumlanır</div>
+  </div>
+  <div class="rbk" style="padding:0;overflow:hidden">
+    <div class="racc-head" onclick="toggleResonance()" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;user-select:none">
+      <span style="font-family:monospace;font-size:12px;color:var(--igsas);font-weight:700">// Rezonans / Yay Sabiti — Opsiyonel</span>
+      <span id="raccBtn" style="width:24px;height:24px;border-radius:50%;background:var(--igsas);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0">+</span>
+    </div>
+    <div id="raccBody" style="display:none;padding:0 14px 14px">
+    <div class="ig" style="margin-bottom:10px"><div class="ilbl" style="color:#00cc66">Doğal Frekans (f_n) — VibXpert II darbe testi</div><input type="text" id="fn" inputmode="decimal" placeholder="18.5"><div class="iunit">Hz — öncelikli</div></div>
+    <div class="rsep">— veya —</div>
+    <div class="ig" style="margin-bottom:0"><div class="ilbl" style="color:#556644">Yay Sabiti — Sertlik (k)</div><input type="text" id="stiff" inputmode="decimal" placeholder="5000000"><div class="iunit">N/m — f_n girilmişse kullanılmaz</div></div>
+    </div>
+  </div>
+  <div class="ig">
+    <div class="ilbl">Fan Dönüş Yönü</div>
+    <div class="dirs">
+      <button class="dbtn a" id="dirCW" onclick="setDir('CW')"><span class="dico">&#8635;</span><span class="dtxt">Saat Yönü</span><span class="dsub">CW</span></button>
+      <button class="dbtn" id="dirCCW" onclick="setDir('CCW')"><span class="dico">&#8634;</span><span class="dtxt">Saat Yönü Tersi</span><span class="dsub">CCW</span></button>
+    </div>
+    <div class="iunit">Açılar dönüş yönünün tersine işaretlenir</div>
   </div>
 </div>
-
-<button class="cbtn" onclick="doCalc()">⟶ HESAPLA</button>
-
+<button class="cbtn" onclick="doCalc()">&#10230; HESAPLA</button>
 <div id="resBox">
-  <div class="card" style="border-left-color:#4488ff;margin-top:16px">
-    <div class="lbl">Hesaplanan Sonuç</div>
-    <div class="tit">Düzeltme Ağırlığı</div>
+  <div class="card" style="border-left-color:#00833e;margin-top:16px">
+    <div class="lbl">Sonuç</div>
+    <div class="tit">Düzeltme Ağırlığı &amp; Konum</div>
     <div class="rcards">
-      <div class="rc bl"><div class="rclbl">Ağırlık Miktarı</div><div class="rcv" id="rW">-</div><div class="rcu">gram</div></div>
+      <div class="rc bl"><div class="rclbl">Düzeltme Ağırlığı</div><div class="rcv" id="rW">-</div><div class="rcu">gram</div></div>
       <div class="rc dk"><div class="rclbl">Konum (0°'den)</div><div class="rcv" id="rA">-</div><div class="rcu">derece</div></div>
     </div>
-
-    <div id="statDiv" class="sok">Henüz hesaplanmadı</div>
-    
-    <div class="irow"><span class="l">Kalıntı Balans (U)</span><span class="v" id="rU">-</span></div>
-    <div class="irow"><span class="l">ISO Sınıfı (G)</span><span class="v" id="rG">-</span></div>
-
-    <div class="sdiv">// Kanat Dağılım Analizi</div>
-    <table class="btab"><thead><tr><th>Kanat</th><th>Konum</th><th>Fark</th><th>Durum</th></tr></thead><tbody id="bTBody"></tbody></table>
-
-    <div class="guide" id="guideBox">
-        <div id="guideDiv"></div>
+    <div class="fbox">
+      <div class="ft">// Ara Hesaplama Değerleri</div>
+      <div id="f1"></div><div id="f2"></div><div id="f3"></div><div id="f4"></div><div id="f5"></div><div id="f6"></div><div id="f7"></div>
     </div>
-
-    <button class="pbtn" onclick="window.print()">&#11015; Raporu Yazdır / Kaydet</button>
+    <div class="irow"><span class="l">Dengesizlik — U = W_düz × r</span><span class="v" id="rU">-</span></div>
+    <div class="irow"><span class="l">Özgül dengesizlik — e = U / m</span><span class="v" id="rE">-</span></div>
+    <div class="irow"><span class="l">Dengesizlik kuvveti — F (yatak yükü, Newton)</span><span class="v" id="rF">-</span></div>
+    <div class="irow"><span class="l">İzin verilen kalıntı dengesizlik — U_per (ISO G6.3)</span><span class="v" id="rUper">-</span></div>
+    
+    <div class="irow"><span class="l">ISO 1940-1 Kalite Sınıfı — G</span><span class="v" id="rG">-</span></div>
+    <div class="irow"><span class="l">Çalışma frekansı — f = n / 60</span><span class="v" id="rHz">-</span></div>
+    <div class="irow" id="rrRow" style="display:none"><span class="l">Kritik devir — n_krit (rezonans hızı)</span><span class="v" id="rNc">-</span></div>
+    <div class="irow" id="rrRow2" style="display:none"><span class="l">Frekans oranı — Ω/ω_n (&lt;0.7 güvenli, 0.7–1.3 kritik)</span><span class="v" id="rRR">-</span></div>
+    <div id="isoBan" class="ban ok" style="margin-top:12px">-</div>
+    <div id="iso10816Ban" class="ban ok">-</div>
+    <div id="uperBan" class="ban ok">-</div>
+    <div id="resonBan" class="ban ok" style="display:none">-</div>
+    <div id="spdDiv" class="spok">-</div>
+    <div id="sr2Div" class="sr2">-</div>
+    <div class="dialwrap" id="dialWrap">
+      <svg id="dialSvg" width="220" height="236" viewBox="-10 -20 220 236">
+        <circle cx="100" cy="100" r="90" fill="#111" stroke="#222" stroke-width="1.5"/>
+        <g id="dTicks"></g>
+        <circle cx="100" cy="100" r="70" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+        <circle cx="100" cy="100" r="45" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+        <g id="bMarkers"></g>
+        <circle cx="100" cy="12" r="5" fill="#ff5533"/>
+        <text x="100" y="-8" text-anchor="middle" fill="#ff5533" font-size="12" font-family="monospace" font-weight="bold">0</text>
+        <circle cx="100" cy="100" r="8" fill="#333"/>
+        <line id="dArrow" x1="100" y1="100" x2="100" y2="22" stroke="#00833e" stroke-width="3" stroke-linecap="round" style="display:none"/>
+        <circle id="dDot" cx="100" cy="18" r="7" fill="#00833e" style="display:none"/>
+      </svg>
+      <div class="diallbl" id="dFooter">F2 | Kanat konumlari</div>
+    </div>
+    <div class="sdiv">// En Yakın Kanat Analizi</div>
+    <table class="btab"><thead><tr><th>Kanat No</th><th>Konum</th><th>Fark</th><th>Durum</th></tr></thead><tbody id="bTBody"></tbody></table>
+    <div id="statDiv" class="sok">-</div>
+    <div class="guide"><div id="guideDiv"></div></div>
+    <div style="background:#0a1a0a;border:1px solid #1a3a1a;border-left:4px solid #00cc66;border-radius:4px;padding:12px;margin-bottom:12px">
+      <div style="font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#00cc66;margin-bottom:8px">// Balans Sonrası Doğrulama Ölçümü</div>
+      <div class="ig" style="margin-bottom:4px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div class="ilbl" style="color:#00cc66;min-height:32px;align-items:flex-start">Balans Sonrası Titreşim (V_son)</div>
+          <input type="text" id="vPost" inputmode="decimal" placeholder="örn: 2.10" oninput="updatePostResult()">
+          <div class="iunit">mm/s — ağırlık takıldıktan sonra</div>
+        </div>
+        <div>
+          <div class="ilbl" style="color:var(--text2);min-height:32px;align-items:flex-start">Ekipman Adı</div>
+          <input type="text" id="equipName" placeholder="örn: Soğutma Fanı 2A">
+          <div class="iunit">opsiyonel — rapor başlığı için</div>
+        </div>
+      </div>
+      <div id="vPostResult" style="display:none"></div>
+    </div>
+    <button class="pbtn" onclick="doPdf()">&#11015; PDF İndir</button>
+    <button class="rbtn" onclick="doReset()">&#8635; Bu Çalışmayı Temizle</button>
   </div>
 </div>
-
-<footer>İGSAŞ Bakım Departmanı için geliştirilmiştir</footer>
+<footer>Fan Balans v3.0 — Thearle 3 Nokta — ISO 1940-1 / ISO 10816 — Umut Küçük</footer>
 </div>
-
-<script>
-var ROT = 'CW';
-
-function getNum(id) {
-  var el = document.getElementById(id);
-  return el ? parseFloat(el.value.replace(',','.')) : NaN;
-}
-
-function calculateWeightSplit(targetWeight, targetAngle, blades) {
-    if (!blades || blades < 2) return null;
-    let sector = 360 / blades;
-    let b1_idx = Math.floor(targetAngle / sector);
-    let b2_idx = (b1_idx + 1) % blades;
-    
-    let alpha = targetAngle - (b1_idx * sector);
-    let gamma = sector;
-    let rad = Math.PI / 180;
-    
-    let w1 = targetWeight * Math.sin((gamma - alpha) * rad) / Math.sin(gamma * rad);
-    let w2 = targetWeight * Math.sin(alpha * rad) / Math.sin(gamma * rad);
-    
-    return {
-        b1: {no: b1_idx + 1, weight: w1.toFixed(1), deg: (b1_idx * sector).toFixed(1)},
-        b2: {no: b2_idx + 1, weight: w2.toFixed(1), deg: (b2_idx * sector).toFixed(1)}
-    };
-}
-
-function doCalc() {
-  var v0=getNum('v0'), vA=getNum('vA'), vB=getNum('vB'), vC=getNum('vC');
-  var wt=getNum('wt'), fm=getNum('fanM'), fr=getNum('fanR'), rpm=getNum('rpm');
-  var z=getNum('blades'), isoTgt=getNum('isoTarget');
-
-  if (isNaN(v0) || isNaN(vA) || isNaN(wt) || isNaN(fm) || isNaN(rpm)) {
-    alert("Lütfen tüm zorunlu alanları doldurun!");
-    return;
-  }
-
-  // Güvenli Deneme Ağırlığı Kontrolü
-  let maxSafeWt = (fm * 1000) * 0.001; 
-  if (wt > maxSafeWt) alert("UYARI: Deneme ağırlığı fan kütlesine göre çok yüksek (%0.1 sınırı)!");
-
-  // Thearle Hesaplamaları
-  var dA=vA*vA-v0*v0, dB=vB*vB-v0*v0, dC=vC*vC-v0*v0;
-  var x=(2*dA-dB-dC)/3, y=(dB-dC)/Math.sqrt(3);
-  var tDeg=Math.atan2(y,x)*180/Math.PI;
-  if (tDeg<0) tDeg+=360;
-  var ang=(tDeg+180)%360;
-  var uMag=Math.sqrt(x*x+y*y);
-  var wc=(2*v0*v0*wt)/uMag;
-
-  // ISO ve Limit Kontrolleri
-  var U=wc*fr, e=U/fm;
-  var om=rpm*2*Math.PI/60, G=(e/1000)*om;
-  var uPer = (isoTgt * fm * 1000) / om;
-
-  // Sonuçları Yazdır
-  document.getElementById('rW').textContent = wc.toFixed(1);
-  document.getElementById('rA').textContent = ang.toFixed(1) + "°";
-  document.getElementById('rU').textContent = U.toFixed(0) + " g.mm";
-  document.getElementById('rG').textContent = "G " + G.toFixed(1);
-  
-  var stat = document.getElementById('statDiv');
-  if (U <= uPer) {
-    stat.className = "sok";
-    stat.innerHTML = "✓ UYGUN: Kalıntı balans limitin altında (" + uPer.toFixed(0) + " g.mm)";
-  } else {
-    stat.className = "swa";
-    stat.innerHTML = "⚠ LIMIT ASILDI: Hedeflenen G" + isoTgt + " için sınır " + uPer.toFixed(0) + " g.mm olmalı.";
-  }
-
-  // Kanat Analizi ve Bölüştürme
-  var tb = document.getElementById('bTBody');
-  tb.innerHTML = "";
-  if (z > 0) {
-    let split = calculateWeightSplit(wc, ang, z);
-    let sector = 360/z;
-    for (let i=0; i<3; i++) { // En yakın 3 kanadı göster
-        let b_deg = ((Math.round(ang/sector) + i - 1 + z) % z) * sector;
-        let diff = Math.abs(ang - b_deg);
-        tb.innerHTML += `<tr><td>Kanat ${Math.round(b_deg/sector)+1}</td><td>${b_deg.toFixed(1)}°</td><td>${diff.toFixed(1)}°</td><td>-</td></tr>`;
-    }
-
-    // Rehber Kısmı
-    let gd = document.getElementById('guideDiv');
-    gd.innerHTML = `<div class="gtit">Montaj Talimatı</div>
-        <div class="grow"><div class="gn b">1</div><div>0° referansından <b>${ang.toFixed(1)}°</b> saat yönünde işaretle.</div></div>
-        <div class="grow"><div class="gn b">2</div><div><b>${wc.toFixed(1)} gram</b> ağırlığı r=${fr}mm mesafeye sabitle.</div></div>`;
-    
-    if (split) {
-        gd.innerHTML += `<div class="gtit" style="color:#ffaa00">Kanatlara Bölüştürme</div>
-            <div class="grow"><div class="gn" style="background:#ffaa00">!</div>
-            <div>Açıyı tutturamazsanız: <b>Kanat ${split.b1.no}</b>'e ${split.b1.weight}g ve <b>Kanat ${split.b2.no}</b>'ye ${split.b2.weight}g takın.</div></div>`;
-    }
-  }
-
-  document.getElementById('resBox').style.display = 'block';
-}
-</script>
+<script>initApp();</script>
 </body>
 </html>
