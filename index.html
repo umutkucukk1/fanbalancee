@@ -341,7 +341,25 @@ function genSessionHtml(r, hasPost, vPost, tn, td, eqName){
     var pc=zpA.q==='ok'?'#00602d':zpA.q==='wa'?'#8a6900':'#a01722';
     var durumUp=(vPost<r.v0?('&#304;Y&#304;LE&#350;ME VAR &#8212; '+(iyi?'KAL&#304;TE SINIFI Y&#220;KSELD&#304;':'AYNI B&#214;LGEDE DEVAM')):'T&#304;TRE&#350;&#304;M ARTMI&#350;');
     var basariOk=vPost<r.tgt||zpA.z==='A';
+    var oneriTxt=(zpA.z<='B')?('Titre&#351;im ISO 10816-3 B&#246;lge '+zpA.z+' seviyesine getirilmi&#351;tir. Periyodik titre&#351;im takibinin s&#252;rd&#252;r&#252;lmesi ve sonraki &#246;l&#231;&#252;m&#252;n planl&#305; bak&#305;m d&#246;neminde al&#305;nmas&#305; &#246;nerilir.'):(zpA.z==='C')?('Titre&#351;im B&#246;lge C (alarm) seviyesindedir. K&#305;sa vadede yeniden de&#287;erlendirme ve titre&#351;im trendinin yak&#305;ndan izlenmesi &#246;nerilir.'):('Titre&#351;im B&#246;lge D (tehlike) seviyesindedir. Acil m&#252;dahale; yeniden dengeleme veya detayl&#305; ar&#305;za incelemesi gereklidir.');
 
+    var _L=r.lims10816, _bmax=Math.max(r.v0,(hasPost?vPost:0),_L[2])*1.12;
+    var _pA=_L[0]/_bmax*100,_pB=(_L[1]-_L[0])/_bmax*100,_pC=(_L[2]-_L[1])/_bmax*100,_pD=(_bmax-_L[2])/_bmax*100;
+    function _clmp(p){return Math.max(5,Math.min(95,p));}
+    var _bp=Math.max(1,Math.min(99,r.v0/_bmax*100)), _sp=Math.max(1,Math.min(99,vPost/_bmax*100));
+    function _ltx(p){return p>82?'-100%':(p<18?'0%':'-50%');}
+    var isoBandHtml=rtitle('ISO 10816 T&#304;TRE&#350;&#304;M SEV&#304;YES&#304; (mm/s)')+
+      '<div class="isoband">'+
+        '<div class="ibtop"><div class="ibmk" style="left:'+_bp+'%"><span class="ibmklbl" style="transform:translateX('+_ltx(_bp)+');color:#c0392b">&#214;ncesi '+r.v0.toFixed(2)+'</span><span class="ibmkline" style="background:#c0392b"></span></div></div>'+
+        '<div class="ibbar">'+
+          '<div class="ibseg" style="width:'+_pA+'%;background:#2e9e5b">A</div>'+
+          '<div class="ibseg" style="width:'+_pB+'%;background:#9bc53d;color:#33420a">B</div>'+
+          '<div class="ibseg" style="width:'+_pC+'%;background:#f0932b">C</div>'+
+          '<div class="ibseg" style="width:'+_pD+'%;background:#c0392b">D</div>'+
+        '</div>'+
+        '<div class="ibticks"><span style="left:0%;transform:translateX(0)">0</span><span style="left:'+_pA+'%">'+_L[0]+'</span><span style="left:'+(_pA+_pB)+'%">'+_L[1]+'</span><span style="left:'+(_pA+_pB+_pC)+'%">'+_L[2]+'</span></div>'+
+        (hasPost?('<div class="ibbot"><div class="ibmk" style="left:'+_sp+'%"><span class="ibmkline" style="background:#00833e"></span><span class="ibmklbl" style="transform:translateX('+_ltx(_sp)+');color:#00833e">Sonras&#305; '+vPost.toFixed(2)+'</span></div></div>'):'')+
+      '</div>';
     page1='<div class="pg">'+header()+
       '<div class="okbanner">'+I_CHECK+'<div><b>'+durumUp+'</b><br>B&#246;lge: '+zoneBadge(zpB.z,zpB.z)+' &#8594; '+zoneBadge(zpA.z,zpA.z+' ('+zA[zpA.z]+')')+'</div></div>'+
       // stat cards with icons
@@ -350,6 +368,7 @@ function genSessionHtml(r, hasPost, vPost, tn, td, eqName){
       '<div class="statcard"><div class="sccirc" style="background:#e6f4ea;color:#00833e">'+I_FAN+'</div><div class="sctxt"><div class="sclbl">BALANS SONRASI</div><div class="scval" style="color:#00833e">'+vPost.toFixed(2)+'</div><div class="scunit">mm/s</div></div></div>'+
       '<div class="statcard"><div class="sccirc" style="background:#e6f4ea;color:#00833e">'+I_PCT+'</div><div class="sctxt"><div class="sclbl">AZALMA</div><div class="scval" style="color:#00833e">%'+az+'</div><div class="scunit">iyile&#351;me</div></div></div>'+
       '</div>'+
+      isoBandHtml+
       // two columns: uygulanan düzeltme | rotor dial
       '<table class="twocol"><tr><td style="width:50%">'+
         rtitle('UYGULANAN D&#220;ZELTME')+
@@ -373,7 +392,7 @@ function genSessionHtml(r, hasPost, vPost, tn, td, eqName){
       '<tr><td class="lc">'+I_CLIP+'<b>Saha Sonucu ve Yorum</b></td><td style="font-size:9.5pt;color:#555">'+(vPost<r.tgt?'Titre&#351;im seviyesi iyi seviyededir.':'Titre&#351;im seviyesi iyi seviyededir.<br>ISO 1940-1 a&#231;&#305;s&#305;ndan ek iyile&#351;tirme de&#287;erlendirilebilir.')+'</td></tr>'+
       '</table>'+
       // sonuç (trophy)
-      '<div class="trophy">'+I_TROPHY+'<div><b style="font-size:11pt">SONU&#199;: FAN DENGELEME &#304;&#350;LEM&#304; '+(basariOk?'BA&#350;ARIYLA UYGULANMI&#350;TIR.':'UYGULANMI&#350;, KONTROL &#214;NER&#304;L&#304;R.')+'</b><br>'+zoneBadge(zpA.z)+' seviyesinde do&#287;rulanm&#305;&#351;t&#305;r.</div></div>'+
+      '<div class="trophy">'+I_TROPHY+'<div><b style="font-size:13.5pt">SONU&#199;: FAN DENGELEME &#304;&#350;LEM&#304; '+(basariOk?'BA&#350;ARIYLA UYGULANMI&#350;TIR.':'UYGULANMI&#350;, KONTROL &#214;NER&#304;L&#304;R.')+'</b><br>'+zoneBadge(zpA.z)+' seviyesinde do&#287;rulanm&#305;&#351;t&#305;r.</div></div>'+
       '</div>';
   }
 
@@ -387,7 +406,7 @@ function genSessionHtml(r, hasPost, vPost, tn, td, eqName){
     // 1 + 2 two cols
     '<table class="twocol"><tr><td style="width:50%">'+
       snum2('1','G&#304;R&#304;&#350; DE&#286;ERLER&#304;')+
-      '<table class="grid"><tr><th>Parametre</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>'+
+      '<table class="grid gfix"><colgroup><col style="width:42%"><col style="width:18%"><col style="width:22%"><col style="width:18%"></colgroup><tr><th>Parametre</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>'+
       '<tr><td>Referans Titre&#351;im (A&#287;.s&#305;z)</td><td>V&#8320;</td><td>'+r.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
       '<tr><td>0&#176; Titre&#351;im</td><td>V_A</td><td>'+r.vA.toFixed(2)+'</td><td>mm/s</td></tr>'+
       '<tr><td>120&#176; Titre&#351;im</td><td>V_B</td><td>'+r.vB.toFixed(2)+'</td><td>mm/s</td></tr>'+
@@ -402,19 +421,16 @@ function genSessionHtml(r, hasPost, vPost, tn, td, eqName){
       '<tr><td>D&#246;n&#252;&#351; Y&#246;n&#252;</td><td>&#8212;</td><td colspan="2">'+(r.rot==='CW'?'Saat Y&#246;n&#252; (CW)':'Tersi (CCW)')+'</td></tr></table>'+
     '</td><td style="width:50%;vertical-align:top">'+
       snum2('2','ARA HESAPLAMA DE&#286;ERLER&#304;')+
-      '<table class="grid"><tr><th>Sembol</th><th>Anlam</th><th>Hesaplama</th><th>Sonu&#231;</th></tr>'+
-      '<tr><td>dA</td><td>0&#176; etki fark&#305;</td><td>V_A&#178;&#8722;V&#8320;&#178;</td><td>'+r.dA.toFixed(4)+'</td></tr>'+
-      '<tr><td>dB</td><td>120&#176; etki fark&#305;</td><td>V_B&#178;&#8722;V&#8320;&#178;</td><td>'+r.dB.toFixed(4)+'</td></tr>'+
-      '<tr><td>dC</td><td>240&#176; etki fark&#305;</td><td>V_C&#178;&#8722;V&#8320;&#178;</td><td>'+r.dC.toFixed(4)+'</td></tr>'+
-      '<tr><td>x</td><td>Yatay bile&#351;en</td><td>(2dA&#8722;dB&#8722;dC)/3</td><td>'+r.x.toFixed(4)+'</td></tr>'+
-      '<tr><td>y</td><td>Dikey bile&#351;en</td><td>(dB&#8722;dC)/&#8730;3</td><td>'+r.y.toFixed(4)+'</td></tr>'+
+      '<table class="grid gfix"><colgroup><col style="width:16%"><col style="width:26%"><col style="width:33%"><col style="width:25%"></colgroup><tr><th>Sembol</th><th>Anlam</th><th>Hesaplama</th><th>Sonu&#231;</th></tr>'+
+      '<tr><td>dA</td><td>0&#176; etki fark&#305;</td><td>V_A&#178;&#8722;V&#8320;&#178;</td><td>'+r.dA.toFixed(1)+'</td></tr>'+
+      '<tr><td>dB</td><td>120&#176; etki fark&#305;</td><td>V_B&#178;&#8722;V&#8320;&#178;</td><td>'+r.dB.toFixed(1)+'</td></tr>'+
+      '<tr><td>dC</td><td>240&#176; etki fark&#305;</td><td>V_C&#178;&#8722;V&#8320;&#178;</td><td>'+r.dC.toFixed(1)+'</td></tr>'+
+      '<tr><td>x</td><td>Yatay bile&#351;en</td><td>(2dA&#8722;dB&#8722;dC)/3</td><td>'+r.x.toFixed(1)+'</td></tr>'+
+      '<tr><td>y</td><td>Dikey bile&#351;en</td><td>(dB&#8722;dC)/&#8730;3</td><td>'+r.y.toFixed(1)+'</td></tr>'+
       '<tr><td>&#952;</td><td>Dengesizlik y&#246;n&#252;</td><td>atan2(y,x)</td><td>'+r.tDeg.toFixed(2)+'&#176;</td></tr>'+
       '<tr><td>&#952;_d&#252;z</td><td>D&#252;zeltme konumu</td><td>&#952;+180&#176;</td><td>'+r.ang.toFixed(2)+'&#176;</td></tr>'+
-      '<tr><td>|UV|</td><td>Vekt&#246;r b&#252;y&#252;kl&#252;&#287;&#252;</td><td>&#8730;(x&#178;+y&#178;)</td><td>'+r.uMag.toFixed(4)+'</td></tr>'+
+      '<tr><td>|UV|</td><td>Vekt&#246;r b&#252;y&#252;kl&#252;&#287;&#252;</td><td>&#8730;(x&#178;+y&#178;)</td><td>'+r.uMag.toFixed(1)+'</td></tr>'+
       '<tr><td>W_d&#252;z</td><td>D&#252;zeltme a&#287;&#305;rl&#305;&#287;&#305;</td><td>2V&#8320;&#178;W_t/|UV|</td><td><b>'+r.wc.toFixed(1)+' g</b></td></tr></table>'+
-      '<div style="height:9px"></div>'+
-      snum2('6','EN YAKIN KANAT ANAL&#304;Z&#304;')+
-      '<table class="grid"><tr><th>Kanat</th><th>Konum</th><th>Fark</th><th>Durum</th></tr>'+brows+'</table>'+
     '</td></tr></table>'+
     // 3 full width
     snum2('3','HESAPLANAN SONU&#199;LAR')+
@@ -444,9 +460,13 @@ function genSessionHtml(r, hasPost, vPost, tn, td, eqName){
       '<div class="ir" style="border-bottom:none">'+I_SHIELD2+'<span class="irl">Dengesizlik Kuvveti</span><span class="irv">F = '+r.F_unbal.toFixed(1)+' N</span></div>'+
       '</div>'+
       '<div class="ibox '+g16q+'" style="margin-top:8px">ISO '+r.iso.c+' | G = '+r.G.toFixed(2)+' mm/s | '+isoDescStr+'</div>'+
+      '<div style="margin-top:9px;border:1px solid #cfe6d6;border-radius:7px;background:#f4faf6;padding:8px 11px">'+
+        '<div style="font-size:8pt;font-weight:800;color:#00602d;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;display:flex;align-items:center;gap:6px">'+I_TARGET+'<span>&#214;NER&#304; VE SONRAKI ADIMLAR</span></div>'+
+        '<div style="font-size:8.5pt;color:#2a2a2a;line-height:1.45">'+oneriTxt+'</div>'+
+      '</div>'+
     '</td></tr></table>'+
     // 6 + 7 two cols
-    snum2('7','YERLE&#350;T&#304;RME TAL&#304;MATI')+
+    snum2('6','YERLE&#350;T&#304;RME TAL&#304;MATI')+
       '<div class="steps2 steps2wide">'+
       '<div class="st2"><span class="stn">1</span><span class="stx">Ekipman&#305; durdurun &#8212; LOTO uygulay&#305;n</span></div>'+
       '<div class="st2"><span class="stn">2</span><span class="stx">0&#176; referans&#305;ndan <b>'+r.ang.toFixed(1)+'&#176;</b> konumunu i&#351;aretleyin</span></div>'+
@@ -489,7 +509,7 @@ var I_INFO=_ic('<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2=
 function getPdfCss(){
   return '*{box-sizing:border-box;margin:0;padding:0}'+
     'body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:9pt;color:#1a1a1a}'+
-    '.pg{max-width:730px;margin:0 auto;padding:10px 16px}'+
+    '.pg{max-width:730px;margin:0 auto;padding:10px 16px;-webkit-text-size-adjust:100%;text-size-adjust:100%}'+
     '.pgbreak{page-break-before:always;break-before:page}'+
     '.topbar{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 7px}'+
     '.logo{height:32px}'+
@@ -499,7 +519,7 @@ function getPdfCss(){
     '.hsub{font-size:10pt;color:#cfcfcf;margin-top:2px}'+
     '.dt{font-size:10pt;color:#eee;white-space:nowrap}'+
     '.tbar{background:#111;color:#fff;padding:6px 13px;border-radius:3px;font-size:10pt;font-weight:800;letter-spacing:0.5px;display:flex;align-items:center;gap:8px;margin-bottom:7px}'+
-    '.rtitle{font-size:9.5pt;font-weight:800;text-transform:uppercase;color:#1a1a1a;border-bottom:2px solid #c0392b;padding-bottom:3px;margin:10px 0 6px;letter-spacing:0.3px;white-space:nowrap;overflow:hidden;line-height:1.25}'+
+    '.rtitle{font-size:9pt;font-weight:800;text-transform:uppercase;color:#1a1a1a;border-bottom:2px solid #c0392b;padding-bottom:3px;margin:10px 0 6px;letter-spacing:0.2px;white-space:nowrap;line-height:1.25}'+
     '.sechead2{display:flex;align-items:center;gap:6px;margin:7px 0 4px}'+
     '.snum2{width:19px;height:19px;border-radius:3px;background:#c0392b;color:#fff;font-size:10pt;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}'+
     '.stit2{font-size:9.5pt;font-weight:800;color:#1a1a1a;letter-spacing:0.3px}'+
@@ -520,29 +540,29 @@ function getPdfCss(){
     '.irl{flex:1;font-size:9pt;color:#333}'+
     '.irv{font-weight:700;font-size:9pt}'+
     '.lr2{margin-top:2px}'+
-    '.lr2 td{border:1px solid #e8e8e8;padding:5px 11px;font-size:9pt;vertical-align:middle}'+
+    '.lr2 td{border:1px solid #e8e8e8;padding:3px 10px;font-size:8pt;vertical-align:middle}'+
     '.lr2 td.lc{background:#fafafa;width:42%}'+
     '.lr2 td.lc svg{vertical-align:-3px;margin-right:7px}'+
-    '.grid td,.grid th{border:1px solid #e4e4e4;padding:2px 5px;font-size:7pt;word-break:normal;hyphens:none}'+
+    '.grid td,.grid th{border:1px solid #e4e4e4;padding:2px 5px;font-size:7pt;word-break:normal;hyphens:none}.gfix{table-layout:fixed}.gfix td,.gfix th{overflow-wrap:break-word;word-break:normal;hyphens:none}'+
     '.grid th{background:#f3f5f4;font-weight:700;text-align:left;color:#333}'+
     '.grid .bestrow{background:#eef7f0}'+
     '.ibox{padding:6px 10px;border-radius:5px;margin-bottom:5px;font-size:8.5pt}'+
     '.iok{background:#e6f4ea;border:1px solid #00833e;color:#00602d}'+
     '.iwarn{background:#fff4d6;border:1px solid #f0ad00;color:#8a6900}'+
     '.ibad{background:#fbe3e4;border:1px solid #d32f2f;color:#a01722}'+
-    '.trophy{display:flex;align-items:center;gap:13px;background:#f4faf6;border:1px solid #cfe6d6;border-radius:7px;padding:11px 15px;font-size:9.5pt;line-height:1.5;margin-top:7px}'+
-    '.steps2{border:1px solid #ebebeb;border-radius:7px;padding:8px 12px}'+
+    '.trophy{display:flex;align-items:center;gap:16px;background:#f4faf6;border:1.5px solid #b5dcc0;border-radius:9px;padding:18px 22px;font-size:11pt;line-height:1.6;margin-top:12px}'+
+    '.steps2{border:1px solid #ebebeb;border-radius:7px;padding:8px 12px}.isoband{margin:2px 0 5px}.ibtop{position:relative;height:15px}.ibbot{position:relative;height:15px}.ibmk{position:absolute;width:0}.ibtop .ibmk{bottom:0}.ibbot .ibmk{top:0}.ibmkline{position:absolute;left:-1px;width:2px;height:6px}.ibtop .ibmkline{bottom:0}.ibbot .ibmkline{top:0}.ibmklbl{position:absolute;left:0;font-size:7.5pt;font-weight:700;line-height:1.1;white-space:nowrap}.ibtop .ibmklbl{bottom:7px}.ibbot .ibmklbl{top:7px}.ibbar{display:flex;height:19px;border-radius:4px;overflow:hidden}.ibseg{display:flex;align-items:center;justify-content:center;font-size:8pt;font-weight:800;color:#fff}.ibticks{position:relative;height:11px;margin-top:1px}.ibticks span{position:absolute;transform:translateX(-50%);font-size:6.5pt;color:#999}'+
     '.st2{display:flex;align-items:flex-start;gap:8px;padding:2.5px 0;font-size:8.5pt;line-height:1.3}.stx{flex:1;min-width:0}.steps2wide{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 18px;align-items:start}'+
     '.stn{width:18px;height:18px;border-radius:50%;background:#00833e;color:#fff;font-size:8.5pt;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}'+
     '.dialbox{border:1px solid #ebebeb;border-radius:7px;padding:6px;text-align:center}.dialbox svg{max-width:230px!important}.note{display:flex;align-items:center;gap:7px;background:#f6f6f6;border-radius:6px;padding:7px 11px;font-size:8pt;color:#777;margin-top:7px}'+
     '.pbtn{display:block;width:auto;min-width:340px;max-width:480px;margin:20px auto 12px;padding:16px 36px;background:#00833e;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;box-shadow:0 2px 10px rgba(0,131,62,0.35);text-align:center}'+
     '.pbtn:hover{background:#00602d}'+
-    '@media print{.pbtn,.nop{display:none!important}@page{margin:8mm;size:A4}#pfwrap{zoom:1!important;transform:none!important;width:auto!important}.pg{padding:0 6mm!important;zoom:1!important}html,body{height:auto!important}.okbanner{margin-top:5mm!important}.cards{margin:8mm 0!important}.lr2{margin-top:5mm!important}.trophy{margin-top:9mm!important}.dialbox svg{max-width:270px!important}.dialbox{padding:10px!important}}';
+    '@media print{.pbtn,.nop{display:none!important}@page{margin:8mm;size:A4}#pfwrap{zoom:1!important;transform:none!important;width:auto!important}.pg{padding:0 6mm!important;zoom:1!important}html,body{height:auto!important}.okbanner{margin-top:3mm!important}.cards{margin:4mm 0!important}.isoband{margin:3mm 0 4mm!important}.lr2{margin-top:2mm!important}.trophy{margin-top:4mm!important}.dialbox svg{max-width:230px!important}.dialbox{padding:7px!important}}';
 }
 
 function openPdfWin(bodyHtml,title){
   var h='<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+title+'</title>'+
-    '<style>'+getPdfCss()+'html,body{margin:0;overflow-x:hidden}#pfwrap{width:760px;margin:0 auto;transform-origin:top left}@media print{#pfwrap{zoom:1!important;transform:none!important;width:auto!important;margin:0!important}html,body{overflow:visible;width:auto}}<\/style><\/head><body>'+
+    '<style>'+getPdfCss()+'html{-webkit-text-size-adjust:100%;text-size-adjust:100%}html,body{margin:0;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}#pfwrap{width:760px;margin:0 auto;transform-origin:top left}@media print{#pfwrap{zoom:1!important;transform:none!important;width:auto!important;margin:0!important}html,body{overflow:visible;width:auto}}<\/style><\/head><body>'+
     '<div id="pfwrap">'+bodyHtml+'<\/div>'+
     '<button class="pbtn" onclick="window.print()">&#11015; PDF OLARAK KAYDET / YAZDIR</button>'+
     '<script>(function(){if(window.self!==window.top)return;function fit(){var w=document.getElementById("pfwrap");if(!w)return;var av=document.documentElement.clientWidth||window.innerWidth;w.style.zoom=av<772?(av/772):1;}window.addEventListener("resize",fit);window.addEventListener("load",fit);setTimeout(fit,30);fit();})();<\/script>'+
